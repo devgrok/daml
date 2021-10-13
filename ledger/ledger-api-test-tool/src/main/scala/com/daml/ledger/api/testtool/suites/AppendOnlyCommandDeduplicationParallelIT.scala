@@ -45,6 +45,7 @@ class AppendOnlyCommandDeduplicationParallelIT extends LedgerTestSuite {
     s"DeduplicateParallelSubmissionsUsingCommandSubmissionService",
     "Commands submitted at the same, in parallel, using the CommandSubmissionService, should be deduplicated",
     allocate(SingleParty),
+    multiParticipant = true,
   )(implicit ec => { case Participants(Participant(ledger, party)) =>
     lazy val request = buildSubmitRequest(ledger, party)
     runTestWithSubmission[SubmitRequest](
@@ -59,6 +60,7 @@ class AppendOnlyCommandDeduplicationParallelIT extends LedgerTestSuite {
     "Commands submitted at the same, in parallel, using the CommandService, should be deduplicated",
     allocate(SingleParty),
     runConcurrently = false,
+    multiParticipant = true,
   )(implicit ec => { case Participants(Participant(ledger, party)) =>
     val request = buildSubmitAndWaitRequest(ledger, party)
     runTestWithSubmission[SubmitAndWaitRequest](
@@ -73,6 +75,7 @@ class AppendOnlyCommandDeduplicationParallelIT extends LedgerTestSuite {
     "Commands submitted at the same, in parallel, using the CommandService and the CommandSubmissionService, should be deduplicated",
     allocate(SingleParty),
     runConcurrently = false,
+    multiParticipant = true,
   )(implicit ec => { case Participants(Participant(ledger, party)) =>
     val submitAndWaitRequest = buildSubmitAndWaitRequest(ledger, party)
     val submitRequest = buildSubmitRequest(ledger, party).update(

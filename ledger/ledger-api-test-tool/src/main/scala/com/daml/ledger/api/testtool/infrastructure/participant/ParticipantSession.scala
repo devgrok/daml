@@ -53,7 +53,7 @@ private[infrastructure] final class ParticipantSession private (
   ): Future[ParticipantTestContext] =
     for {
       end <- services.transaction.getLedgerEnd(new GetLedgerEndRequest(ledgerId)).map(_.getOffset)
-    } yield new ParticipantTestContext(
+    } yield new LedgerParticipantTestContext(
       ledgerId = ledgerId,
       endpointId = endpointId,
       applicationId = applicationId,

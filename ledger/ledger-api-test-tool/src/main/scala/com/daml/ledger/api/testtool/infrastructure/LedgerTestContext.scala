@@ -8,7 +8,11 @@ import com.daml.ledger.api.testtool.infrastructure.Allocation.{
   ParticipantAllocation,
   Participants,
 }
-import com.daml.ledger.api.testtool.infrastructure.participant.ParticipantTestContext
+import com.daml.ledger.api.testtool.infrastructure.participant.{
+  LedgerParticipantTestContext,
+  ParticipantTestContext,
+  RandomParticipantTestContext,
+}
 
 import scala.collection.immutable
 import scala.concurrent.{ExecutionContext, Future}
@@ -38,17 +42,32 @@ private[testtool] final class LedgerTestContext private[infrastructure] (
     * Each test allocates participants, then deconstructs the result and uses the various ledgers
     * and parties throughout the test.
     */
-  def allocate(allocation: ParticipantAllocation): Future[Participants] = {
+  def allocate(
+      allocation: ParticipantAllocation,
+      multiParticipantTest: Boolean,
+  ): Future[Participants] = {
     val participantAllocations = allocation.partyCounts.map(nextParticipant() -> _)
-    val participantsUnderTest = participantAllocations.map(_._1)
     Future
       .sequence(participantAllocations.map {
-        case (participant: ParticipantTestContext, partyCount) =>
+        case (participant: LedgerParticipantTestContext, partyCount) =>
           participant
-            .preallocateParties(partyCount.count, participantsUnderTest)
+            .preallocateParties(partyCount.count, configuredParticipants)
             .map(parties => Participant(participant, parties: _*))
+        case _ =>
+          throw new IllegalArgumentException(
+            "During allocation only the actual ledger participant should be present"
+          )
       })
-      .map(allocatedParticipants => Participants(allocatedParticipants: _*))
+      .map(allocatedParticipants =>
+        if (multiParticipantTest)
+          Participants(
+            Participant(
+              new RandomParticipantTestContext(configuredParticipants),
+              allocatedParticipants.flatMap(_.parties): _*
+            )
+          )
+        else Participants(allocatedParticipants: _*)
+      )
   }
 
   private[this] def nextParticipant(): ParticipantTestContext =

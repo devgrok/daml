@@ -53,6 +53,7 @@ private[testtool] abstract class CommandDeduplicationBase(
     "Deduplicate commands within the deduplication duration window",
     allocate(SingleParty),
     runConcurrently = false,
+    multiParticipant = true,
   )(implicit ec =>
     configuredParticipants => { case Participants(Participant(ledger, party)) =>
       val request = ledger
@@ -162,6 +163,7 @@ private[testtool] abstract class CommandDeduplicationBase(
     "Deduplicate commands within the deduplication time window using the command client",
     allocate(SingleParty),
     runConcurrently = false,
+    multiParticipant = true,
   )(implicit ec =>
     configuredParticipants => { case Participants(Participant(ledger, party)) =>
       val request = ledger
@@ -198,6 +200,7 @@ private[testtool] abstract class CommandDeduplicationBase(
       s"${testNamingPrefix}SimpleDeduplicationMixedClients",
       "Deduplicate commands within the deduplication time window using the command client and the command submission client",
       allocate(SingleParty),
+      multiParticipant = true,
     )(implicit ec =>
       configuredParticipants => { case Participants(Participant(ledger, party)) =>
         def generateVariations(elements: List[List[Boolean]]): List[List[Boolean]] =
@@ -260,6 +263,7 @@ private[testtool] abstract class CommandDeduplicationBase(
     s"${testNamingPrefix}DeduplicateSubmitterBasic",
     "Commands with identical submitter and command identifier should be deduplicated by the submission client",
     allocate(TwoParties),
+    multiParticipant = true,
   )(implicit ec => { case Participants(Participant(ledger, alice, bob)) =>
     val aliceRequest = ledger.submitRequest(alice, Dummy(alice).create.command)
     val bobRequest = ledger
@@ -289,6 +293,7 @@ private[testtool] abstract class CommandDeduplicationBase(
     s"${testNamingPrefix}DeduplicateSubmitterCommandClient",
     "Commands with identical submitter and command identifier should be deduplicated by the command client",
     allocate(TwoParties),
+    multiParticipant = true,
   )(implicit ec => { case Participants(Participant(ledger, alice, bob)) =>
     val aliceRequest = ledger.submitAndWaitRequest(alice, Dummy(alice).create.command)
     val bobRequest = ledger

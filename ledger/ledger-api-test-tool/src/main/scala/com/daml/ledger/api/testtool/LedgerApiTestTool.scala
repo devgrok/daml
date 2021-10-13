@@ -228,6 +228,7 @@ object LedgerApiTestTool {
       cases: Vector[LedgerTestCase],
       concurrentTestRuns: Int,
   )(implicit executionContext: ExecutionContext): Future[LedgerTestCasesRunner] = {
+    println(s"Running on participants ${config.participantsEndpoints}")
     initializeParticipantChannels(
       config.participantsEndpoints,
       config.tlsConfig,

@@ -22,6 +22,7 @@ private[testtool] abstract class LedgerTestSuite {
       timeoutScale: Double = 1.0,
       runConcurrently: Boolean = true,
       repeated: Int = 1,
+      multiParticipant: Boolean = false,
   )(testCase: ExecutionContext => PartialFunction[Participants, Future[Unit]]): Unit = {
     testGivenAllParticipants(
       shortIdentifier,
@@ -30,6 +31,7 @@ private[testtool] abstract class LedgerTestSuite {
       timeoutScale,
       runConcurrently,
       repeated,
+      multiParticipant,
     )((ec: ExecutionContext) => (_: Seq[ParticipantTestContext]) => testCase(ec))
   }
 
@@ -40,6 +42,7 @@ private[testtool] abstract class LedgerTestSuite {
       timeoutScale: Double = 1.0,
       runConcurrently: Boolean = true,
       repeated: Int = 1,
+      multiParticipant: Boolean = false,
   )(
       testCase: ExecutionContext => Seq[ParticipantTestContext] => PartialFunction[
         Participants,
@@ -55,6 +58,7 @@ private[testtool] abstract class LedgerTestSuite {
         timeoutScale,
         runConcurrently,
         repeated,
+        multiParticipant,
         participants,
         testCase,
       )

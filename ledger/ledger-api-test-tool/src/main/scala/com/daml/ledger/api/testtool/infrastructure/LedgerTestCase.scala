@@ -14,8 +14,11 @@ import scala.concurrent.{ExecutionContext, Future}
   * @param description A human-readable description of what this case tests
   * @param timeoutScale The factor applied to the default
   * @param runConcurrently True if the test is safe be ran concurrently with other tests without affecting their results
-  * @param participants What parties need to be allocated on what participants as a setup for the test case
+  * @param participantAllocation What parties need to be allocated on what participants as a setup for the test case
   * @param runTestCase The body of the test to be executed
+  *  @param multiParticipant When set to true, if there are more than one participant configured
+  *                          then we will build a single [[ParticipantTestContext]] which proxies each request
+  *                          to a random participant from the configured list
   */
 sealed class LedgerTestCase(
     val suite: LedgerTestSuite,
@@ -24,13 +27,16 @@ sealed class LedgerTestCase(
     val timeoutScale: Double,
     val runConcurrently: Boolean,
     val repeated: Int = 1,
-    participants: ParticipantAllocation,
+    multiParticipant: Boolean,
+    participantAllocation: ParticipantAllocation,
     runTestCase: ExecutionContext => Seq[ParticipantTestContext] => Participants => Future[Unit],
 ) {
   val name: String = s"${suite.name}:$shortIdentifier"
 
   def apply(context: LedgerTestContext)(implicit ec: ExecutionContext): Future[Unit] =
-    context.allocate(participants).flatMap(p => runTestCase(ec)(context.configuredParticipants)(p))
+    context
+      .allocate(participantAllocation, multiParticipant)
+      .flatMap(p => runTestCase(ec)(context.configuredParticipants)(p))
 
   def repetitions: Vector[LedgerTestCase.Repetition] =
     if (repeated == 1)
