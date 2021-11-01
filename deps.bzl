@@ -53,6 +53,8 @@ rules_nixpkgs_patches = [
     # reportedly solves the issue. See
     # https://github.com/NixOS/nix/issues/2733#issuecomment-518324335
     "@com_github_digital_asset_daml//bazel_tools:nixpkgs-disable-http2.patch",
+    "@com_github_digital_asset_daml//bazel_tools:rules-nixpkgs-arm.patch",
+    "@com_github_digital_asset_daml//bazel_tools:rules-nixpkgs-cpu-value.patch",
 ]
 
 buildifier_version = "4.0.0"
@@ -83,6 +85,9 @@ daml_cheat_sheet_sha256 = "eb022565a929a69d869f0ab0497f02d1a3eacb4dafdafa076a82e
 platforms_version = "0.0.3"
 platforms_sha256 = "15b66b5219c03f9e8db34c1ac89c458bb94bfe055186e5505d5c6f09cb38307f"
 
+rules_sh_version = "47b4d823128f484ec1b06aa20349c4898216f486"
+rules_sh_sha256 = "107d4312073d80a9977d3ccff236060d3906bda939fa2fbda4d724268c5b5383"
+
 def daml_deps():
     if "platforms" not in native.existing_rules():
         http_archive(
@@ -90,6 +95,14 @@ def daml_deps():
             sha256 = platforms_sha256,
             strip_prefix = "platforms-{}".format(platforms_version),
             urls = ["https://github.com/bazelbuild/platforms/archive/{version}.tar.gz".format(version = platforms_version)],
+        )
+
+    if "rules_sh" not in native.existing_rules():
+        http_archive(
+            name = "rules_sh",
+            strip_prefix = "rules_sh-%s" % rules_sh_version,
+            urls = ["https://github.com/tweag/rules_sh/archive/%s.tar.gz" % rules_sh_version],
+            sha256 = rules_sh_sha256,
         )
 
     if "rules_haskell" not in native.existing_rules():

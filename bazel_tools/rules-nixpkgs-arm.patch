@@ -1,0 +1,27 @@
+diff --git a/nixpkgs/nixpkgs.bzl b/nixpkgs/nixpkgs.bzl
+index 1aa2e54..1f8df65 100644
+--- a/nixpkgs/nixpkgs.bzl
++++ b/nixpkgs/nixpkgs.bzl
+@@ -902,13 +902,9 @@ toolchain(
+     toolchain = ":py_runtime_pair",
+     toolchain_type = "@bazel_tools//tools/python:toolchain_type",
+     exec_compatible_with = [
+-        "@platforms//cpu:x86_64",
+-        "@platforms//os:{os}",
+         "@io_tweag_rules_nixpkgs//nixpkgs/constraints:support_nix",
+     ],
+     target_compatible_with = [
+-        "@platforms//cpu:x86_64",
+-        "@platforms//os:{os}",
+     ],
+ )
+ """.format(
+@@ -1124,8 +1120,6 @@ toolchain(
+     toolchain = "@{workspace}//:nixpkgs_sh_posix",
+     toolchain_type = "@rules_sh//sh/posix:toolchain_type",
+     exec_compatible_with = [
+-        "@platforms//cpu:x86_64",
+-        "@platforms//os:{os}",
+         "@io_tweag_rules_nixpkgs//nixpkgs/constraints:support_nix",
+     ],
+     # Leaving the target constraints empty matter for cross-compilation.

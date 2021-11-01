@@ -51,7 +51,7 @@ in rec {
 
     # Haskell development
     ghc             = bazel_dependencies.ghc;
-    ghcid           = pkgs.haskellPackages.ghcid;
+    # ghcid           = pkgs.haskellPackages.ghcid;
     hlint           = bazel_dependencies.hlint;
     ghci            = bazel_dependencies.ghc;
 
@@ -87,7 +87,7 @@ in rec {
     coursier = pkgs.coursier;
     # nixpkgs ships with an RC for scalafmt 2.0 that seems to be significantly slower
     # and changes a lot of formatting so for now we stick to 1.5.1.
-    scalafmt = pkgs.callPackage ./overrides/scalafmt.nix { jre = jdk; };
+    # scalafmt = pkgs.callPackage ./overrides/scalafmt.nix { jre = jdk; };
 
     # Nix development
     cabal2nix = pkgs.cabal2nix;
@@ -107,12 +107,12 @@ in rec {
       };
     });
 
-    node2nix  = pkgs.nodePackages.node2nix;
+    # node2nix  = pkgs.nodePackages.node2nix;
 
-    license-checker =
-      (import ./tools/license-checker { inherit pkgs; nodejs = tools.node; }).license-checker;
+    # license-checker =
+    #  (import ./tools/license-checker { inherit pkgs; nodejs = tools.node; }).license-checker;
 
-    chromedriver = pkgs.chromedriver;
+    # chromedriver = pkgs.chromedriver;
 
     # Python development
     pip3        = pkgs.python37Packages.pip;
