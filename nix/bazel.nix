@@ -71,6 +71,33 @@ let shared = rec {
   ghcPkgs = pkgs.haskell.packages.integer-simple.ghc8107;
 
   ghc = ghcPkgs.ghc;
+
+  ghcLLVMWrapper = pkgs.writeScriptBin "ghc-llvm-wrapper" ''
+      #!${pkgs.stdenv.shell}
+      set -euo pipefail
+      PATH="${pkgs.llvm}/bin:''${PATH:-}" ${ghc}/bin/ghc "$@"
+      '';
+
+  ghcWithLLVM = pkgs.runCommand "ghc-aarch64-symlinks" { buildInputs = [ pkgs.makeWrapper ]; } ''
+      mkdir -p $out/bin
+      for tool in \
+        ghc-8.10.7 \
+        ghc-pkg \
+        ghc-pkg-8.10.7 \
+        ghci \
+        ghci-8.10.7 \
+        hp2ps \
+        hpc \
+        hsc2hs \
+        runghc \
+        runghc-8.10.7 \
+        runhaskell
+      do
+          ln -s ${ghc}/bin/$tool $out/bin/$tool
+      done;
+      makeWrapper ${ghc}/bin/ghc $out/bin/ghc --prefix PATH : ${pkgs.llvm_9}/bin
+      '';
+
   # Deliberately not taken from ghcPkgs. This is a fully
   # static executable so it doesn’t pull in another GHC
   # and upstream nixpkgs does not cache packages for

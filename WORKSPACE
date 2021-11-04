@@ -384,7 +384,7 @@ filegroup(
 # This is used to get ghc-pkg on Linux.
 nixpkgs_package(
     name = "ghc_nix",
-    attribute_path = "ghc",
+    attribute_path = "ghcWithLLVM",
     build_file_content = """
 package(default_visibility = ["//visibility:public"])
 exports_files(glob(["lib/**/*"]))
