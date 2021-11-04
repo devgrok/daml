@@ -98,7 +98,7 @@ let shared = rec {
       done;
       mkdir -p $out/lib
       ln -s ${ghc}/lib/ghc-8.10.7 $out/lib/ghc-8.10.7
-      makeWrapper ${ghc}/bin/ghc $out/bin/ghc --prefix PATH : ${pkgs.llvm_9}/bin:${pkgs.clang_9}/bin
+      makeWrapper ${ghc}/bin/ghc $out/bin/ghc --prefix PATH : ${pkgs.llvm_11}/bin:${pkgs.clang_11}/bin
       '';
 
   # Deliberately not taken from ghcPkgs. This is a fully
