@@ -1,7 +1,16 @@
 diff --git a/haskell/private/cabal_wrapper.py b/haskell/private/cabal_wrapper.py
-index 222f381b..9dc04705 100755
+index 222f381b..4393de25 100755
 --- a/haskell/private/cabal_wrapper.py
 +++ b/haskell/private/cabal_wrapper.py
+@@ -155,7 +155,7 @@ def tmpdir():
+     try:
+         yield distdir
+     finally:
+-        shutil.rmtree(distdir, ignore_errors = True)
++        pass
+ 
+ with tmpdir() as distdir:
+     enable_relocatable_flags = ["--enable-relocatable"] \
 @@ -218,7 +218,8 @@ with tmpdir() as distdir:
      runghc_args = [arg.replace("./", execroot + "/") for arg in runghc_args]
      run([runghc] + runghc_args + [setup, "configure", \
