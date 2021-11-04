@@ -403,7 +403,7 @@ common_ghc_flags = [
 
 # Used by Darwin and Linux
 haskell_register_ghc_nixpkgs(
-    attribute_path = "ghcDwarf" if enable_ghc_dwarf else "ghc",
+    attribute_path = "ghcDwarf" if enable_ghc_dwarf else "ghcWithLLVM",
     build_file = "@io_tweag_rules_nixpkgs//nixpkgs:BUILD.pkg",
 
     # -fexternal-dynamic-refs is required so that we produce position-independent
