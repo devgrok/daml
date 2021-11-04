@@ -1,5 +1,5 @@
 diff --git a/haskell/private/cabal_wrapper.py b/haskell/private/cabal_wrapper.py
-index 222f381b..7124630f 100755
+index 222f381b..9dc04705 100755
 --- a/haskell/private/cabal_wrapper.py
 +++ b/haskell/private/cabal_wrapper.py
 @@ -218,7 +218,8 @@ with tmpdir() as distdir:
@@ -12,3 +12,24 @@ index 222f381b..7124630f 100755
          "--user", \
          "--with-compiler=" + ghc,
          "--with-hc-pkg=" + ghc_pkg,
+@@ -254,16 +255,16 @@ with tmpdir() as distdir:
+         [ arg.replace("=", "=" + execroot + "/") for arg in path_args ] + \
+         [ "--package-db=" + package_database ], # This arg must come last.
+         )
+-    run([runghc] + runghc_args + [setup, "build", "--verbose=0", "--builddir=" + distdir])
++    run([runghc] + runghc_args + [setup, "build", "--verbose=3", "--builddir=" + distdir])
+     if haddock:
+-        run([runghc] + runghc_args + [setup, "haddock", "--verbose=0", "--builddir=" + distdir])
+-    run([runghc] + runghc_args + [setup, "install", "--verbose=0", "--builddir=" + distdir])
++        run([runghc] + runghc_args + [setup, "haddock", "--verbose=3", "--builddir=" + distdir])
++    run([runghc] + runghc_args + [setup, "install", "--verbose=3", "--builddir=" + distdir])
+     # Bazel builds are not sandboxed on Windows and can be non-sandboxed on
+     # other OSs. Operations like executing `configure` scripts can modify the
+     # source tree. If the `srcs` attribute uses a glob like `glob(["**"])`,
+     # then these modified files will enter `srcs` on the next execution and
+     # invalidate the cache. To avoid this we remove generated files.
+-    run([runghc] + runghc_args + [setup, "clean", "--verbose=0", "--builddir=" + distdir])
++    run([runghc] + runghc_args + [setup, "clean", "--verbose=3", "--builddir=" + distdir])
+     if generated_paths_file: os.remove(generated_paths_file)
+     os.chdir(old_cwd)
+ 
