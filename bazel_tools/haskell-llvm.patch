@@ -1,0 +1,13 @@
+diff --git a/haskell/cc.bzl b/haskell/cc.bzl
+index 784d25a0..789e8628 100644
+--- a/haskell/cc.bzl
++++ b/haskell/cc.bzl
+@@ -199,6 +199,8 @@ def ghc_cc_program_args(hs, cc):
+         cc,
+         "-pgml",
+         cc,
++        "-pgmlc",
++        cc,
+         # Setting -pgm* flags explicitly has the unfortunate side effect
+         # of resetting any program flags in the GHC settings file. So we
+         # restore them here. See
