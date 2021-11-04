@@ -81,7 +81,6 @@ let shared = rec {
   ghcWithLLVM = pkgs.runCommand "ghc-aarch64-symlinks" { buildInputs = [ pkgs.makeWrapper ]; } ''
       mkdir -p $out/bin
       for tool in \
-        ghc-8.10.7 \
         ghc-pkg \
         ghc-pkg-8.10.7 \
         ghci \
