@@ -86,6 +86,7 @@ let shared = rec {
         ghc-pkg-8.10.7 \
         ghci \
         ghci-8.10.7 \
+        haddock \
         hp2ps \
         hpc \
         hsc2hs \
