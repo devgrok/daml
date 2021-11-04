@@ -126,7 +126,6 @@ common_nix_file_deps = [
     "//nix:nixpkgs.nix",
     "//nix:nixpkgs/default.nix",
     "//nix:nixpkgs/default.src.json",
-    "//nix:ghc-pgmlcc.patch",
 ]
 
 # Use Nix provisioned cc toolchain
