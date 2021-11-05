@@ -33,11 +33,11 @@ load("@bazel_tools//tools/build_defs/repo:utils.bzl", "maybe")
 rules_scala_version = "67a7ac178a73d1d5ff4c2b0663a8eda6dfcbbc56"
 rules_scala_sha256 = "95054009fd938ac7ef53a20619f94a5408d8ae74eb5b318cd150a3ecb1a6086f"
 
-rules_haskell_version = "673e74aea244a6a9ee1eccec719677c80348aebf"
-rules_haskell_sha256 = "73a06dc6e0d928ceeab64e2cd3159f863eb2e263ecc64d79e3952c770cd1ee51"
+rules_haskell_version = "e67eff938b5c580663c1459d52abb26e90658524"
+rules_haskell_sha256 = "e3c4974287348759bc56f401acd4260ad90b994ea77c43b5d1912b38c257e64d"
 rules_haskell_patches = [
     # This is a daml specific patch and not upstreamable.
-    "@com_github_digital_asset_daml//bazel_tools:haskell-windows-extra-libraries.patch",
+#    "@com_github_digital_asset_daml//bazel_tools:haskell-windows-extra-libraries.patch",
     # This should be made configurable in rules_haskell.
     # Remove this patch once that's available.
     "@com_github_digital_asset_daml//bazel_tools:haskell-opt.patch",
