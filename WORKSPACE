@@ -435,6 +435,10 @@ haskell_register_ghc_nixpkgs(
         "-fexternal-interpreter",
         "-Wwarn",
     ],
+      exec_constraints = [
+      ],
+      target_constraints = [
+      ],
     repositories = dev_env_nix_repos,
     version = "8.10.7",
 )
