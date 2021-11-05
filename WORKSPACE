@@ -439,7 +439,7 @@ haskell_register_ghc_nixpkgs(
 "@platforms//cpu:aarch64"
       ],
       target_constraints = [
-"@platforms//cpu:aarch64_"
+"@platforms//cpu:aarch64"
       ],
     repositories = dev_env_nix_repos,
     version = "8.10.7",
