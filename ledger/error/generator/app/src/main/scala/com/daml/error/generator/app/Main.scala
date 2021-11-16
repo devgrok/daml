@@ -19,11 +19,12 @@ object Main {
   implicit val groupingEncode: Encoder[Grouping] =
     Encoder.forProduct2(
       "docName",
-      "className",
+      "docsFriendlyName",
     )(i =>
       (
         i.docName,
         i.fullClassName,
+//        i.group.map(_.docsFriendlyName),
       )
     )
 
@@ -52,11 +53,11 @@ object Main {
 
   implicit val groupEncode: Encoder[GroupDocItem] =
     Encoder.forProduct2(
-      "className",
+      "docsFriendlyName",
       "explanation",
     )(i =>
       (
-        i.className,
+        i.docsFriendlyName,
         i.explanation.fold("")(_.explanation),
       )
     )

@@ -231,7 +231,7 @@ final class ExceptionsIT extends LedgerTestSuite {
         ledger,
         failure,
         Status.Code.INVALID_ARGUMENT,
-        LedgerApiErrors.CommandExecution.Interpreter.LookupErrors.ContractKeyNotFound,
+        LedgerApiErrors.ConsistencyErrors.ContractKeyNotFound,
         Some("couldn't find key"),
         checkDefiniteAnswerMetadata = true,
       )
@@ -251,7 +251,7 @@ final class ExceptionsIT extends LedgerTestSuite {
         ledger,
         failure,
         Status.Code.INVALID_ARGUMENT,
-        LedgerApiErrors.CommandExecution.Interpreter.LookupErrors.ContractKeyNotFound,
+        LedgerApiErrors.ConsistencyErrors.ContractKeyNotFound,
         Some("couldn't find key"),
         checkDefiniteAnswerMetadata = true,
       )

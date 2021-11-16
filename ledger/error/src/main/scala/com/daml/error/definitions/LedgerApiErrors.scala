@@ -18,6 +18,9 @@ import org.slf4j.event.Level
 
 import java.time.{Duration, Instant}
 
+@Explanation(
+  "Errors raised by or forwarded by the Ledger API."
+)
 object LedgerApiErrors extends LedgerApiErrorGroup {
   @Explanation(
     """This error occurs when a participant rejects a command due to excessive load.
@@ -58,7 +61,10 @@ object LedgerApiErrors extends LedgerApiErrorGroup {
         )
   }
 
-  object CommandExecution extends ErrorGroup {
+  @Explanation(
+    "Errors raised during the command execution phase in command submission evaluation."
+  )
+  object CommandExecution extends CommandExecutionErrorGroup {
     @Explanation(
       """This error occurs if the participant fails to determine the max ledger time of the used
         |contracts. Most likely, this means that one of the contracts is not active anymore which can
@@ -80,7 +86,8 @@ object LedgerApiErrors extends LedgerApiErrorGroup {
           )
     }
 
-    object Package extends ErrorGroup() {
+    @Explanation("Command execution errors raised due to invalid packages.")
+    object Package extends ErrorGroupImpl("Package") {
       @Explanation(
         """This error indicates that the uploaded DAR is based on an unsupported language version."""
       )
@@ -128,7 +135,10 @@ object LedgerApiErrors extends LedgerApiErrorGroup {
       }
     }
 
-    object Preprocessing extends ErrorGroup {
+    @Explanation(
+      "Errors raised during command conversion from Daml LF to Speedy representation."
+    )
+    object Preprocessing extends ErrorGroupImpl("Pre-processing") {
       @Explanation("""This error occurs if a command fails during interpreter pre-processing.""")
       @Resolution("Inspect error details and correct your application.")
       object PreprocessingFailed
@@ -146,7 +156,10 @@ object LedgerApiErrors extends LedgerApiErrorGroup {
       }
     }
 
-    object Interpreter extends ErrorGroup {
+    @Explanation(
+      "Errors raised during the command interpretation phase in command submission evaluation."
+    )
+    object Interpreter extends ErrorGroupImpl("Interpretation") {
       @Explanation("""This error occurs if a Daml transaction fails during interpretation.""")
       @Resolution("This error type occurs if there is an application error.")
       object GenericInterpretationError
@@ -205,34 +218,6 @@ object LedgerApiErrors extends LedgerApiErrorGroup {
 
       }
 
-      object LookupErrors extends ErrorGroup {
-        @Explanation(
-          """This error occurs if the Daml engine interpreter cannot resolve a contract key to an active contract. This
-            |can be caused by either the contract key not being known to the participant, or not being known to
-            |the submitting parties or the contract representing an already archived key."""
-        )
-        @Resolution("This error type occurs if there is contention on a contract.")
-        object ContractKeyNotFound
-            extends ErrorCode(
-              id = "CONTRACT_KEY_NOT_FOUND",
-              ErrorCategory.InvalidGivenCurrentSystemStateResourceMissing,
-            ) {
-
-          case class Reject(
-              override val cause: String,
-              _key: GlobalKey,
-          )(implicit
-              loggingContext: ContextualizedErrorLogger
-          ) extends LoggingTransactionErrorImpl(
-                cause = cause
-              ) {
-            override def resources: Seq[(ErrorResource, String)] = Seq(
-              (ErrorResource.ContractKey, _key.toString())
-            )
-          }
-        }
-      }
-
       @Explanation("""This error occurs if a Daml transaction fails due to an authorization error.
                      |An authorization means that the Daml transaction computed a different set of required submitters than
                      |you have provided during the submission as `actAs` parties.""")
@@ -274,7 +259,8 @@ object LedgerApiErrors extends LedgerApiErrorGroup {
         )
   }
 
-  object AuthorizationChecks extends ErrorGroup() {
+  @Explanation("Authentication errors.")
+  object AuthorizationChecks extends ErrorGroupImpl("Authentication") {
     @Explanation(
       """This rejection is given if the submitted command does not contain a JWT token on a participant enforcing JWT authentication."""
     )
@@ -326,8 +312,14 @@ object LedgerApiErrors extends LedgerApiErrorGroup {
     }
   }
 
-  object RequestValidation extends ErrorGroup {
-    object NotFound extends ErrorGroup() {
+  @Explanation(
+    "Validation errors raised when evaluating requests in the Ledger API."
+  )
+  object RequestValidation extends ErrorGroupImpl("Request Validation") {
+    @Explanation(
+      "Request validation errors due to not found resources."
+    )
+    object NotFound extends ErrorGroupImpl("Missing Resource") {
       @Explanation(
         "This rejection is given when a read request tries to access a package which does not exist on the ledger."
       )
@@ -606,7 +598,8 @@ object LedgerApiErrors extends LedgerApiErrorGroup {
     ) extends LoggingTransactionErrorImpl(cause = message, throwableO = throwableO)
   }
 
-  object AdminServices {
+  @Explanation("Errors raised by Ledger API admin services.")
+  object AdminServices extends ErrorGroupImpl("Admin") {
     @Explanation("This rejection is given when a new configuration is rejected.")
     @Resolution("Fetch newest configuration and/or retry.")
     object ConfigurationEntryRejected
@@ -636,7 +629,10 @@ object LedgerApiErrors extends LedgerApiErrorGroup {
     }
   }
 
-  object ConsistencyErrors extends ErrorGroup {
+  @Explanation(
+    "This error group contains potential consistency errors raised due to race conditions during command submission or returned as submission rejections by the backing ledger."
+  )
+  object ConsistencyErrors extends ErrorGroupImpl("Consistency") {
     @Explanation("A command with the given command id has already been successfully processed.")
     @Resolution(
       """The correct resolution depends on the use case. If the error received pertains to a submission retried due to a timeout,
@@ -728,6 +724,32 @@ object LedgerApiErrors extends LedgerApiErrorGroup {
     }
 
     @Explanation(
+      """This error occurs if the Daml engine cannot resolve a contract key to an active contract. This
+        |can be caused by either the contract key not being known to the participant, or not being known to
+        |the submitting parties or the contract representing an already archived key."""
+    )
+    @Resolution("This error type occurs if there is contention on a contract.")
+    object ContractKeyNotFound
+        extends ErrorCode(
+          id = "CONTRACT_KEY_NOT_FOUND",
+          ErrorCategory.InvalidGivenCurrentSystemStateResourceMissing,
+        ) {
+
+      case class Reject(
+          override val cause: String,
+          _key: GlobalKey,
+      )(implicit
+          loggingContext: ContextualizedErrorLogger
+      ) extends LoggingTransactionErrorImpl(
+            cause = cause
+          ) {
+        override def resources: Seq[(ErrorResource, String)] = Seq(
+          (ErrorResource.ContractKey, _key.toString())
+        )
+      }
+    }
+
+    @Explanation(
       "An input contract key was re-assigned to a different contract by a concurrent transaction submission."
     )
     @Resolution("Retry the transaction submission.")
@@ -796,7 +818,10 @@ object LedgerApiErrors extends LedgerApiErrorGroup {
     }
   }
 
-  object WriteServiceRejections extends ErrorGroup {
+  @Explanation(
+    "Generic submission rejection errors returned by the backing ledger write service."
+  )
+  object WriteServiceRejections extends ErrorGroupImpl("Ledger") {
     @Explanation("The submitting party has not been allocated.")
     @Resolution(
       "Check that the party identifier is correct, allocate the submitting party, " +

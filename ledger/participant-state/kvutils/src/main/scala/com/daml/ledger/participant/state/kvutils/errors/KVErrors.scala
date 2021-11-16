@@ -10,20 +10,19 @@ import com.daml.error.{
   ContextualizedErrorLogger,
   ErrorCategory,
   ErrorCode,
-  ErrorGroup,
+  ErrorGroupImpl,
   Explanation,
   Resolution,
 }
 import com.daml.ledger.participant.state.kvutils.committer.transaction.Rejection.InternallyInconsistentTransaction
 
 @Explanation(
-  "Errors that are specific to ledgers based on the KV architecture. " +
-    "Note that this section will soon cover all ledgers due to an ongoing error consolidation effort."
+  "Errors that are specific to ledgers based on the KV architecture: Daml Sandbox and VMBC."
 )
-object KVErrors extends ErrorGroup()(ErrorGroups.rootErrorClass) {
+object KVErrors extends ErrorGroupImpl("KV Errors")(ErrorGroups.rootErrorClass) {
 
   @Explanation("Errors that relate to the Daml concepts of time.")
-  object Time extends ErrorGroup() {
+  object Time extends ErrorGroupImpl("Time") {
 
     @Explanation(
       "The record time is not within bounds for reasons other than deduplication, such as " +
@@ -90,7 +89,7 @@ object KVErrors extends ErrorGroup()(ErrorGroups.rootErrorClass) {
   }
 
   @Explanation("Errors that relate to system resources.")
-  object Resources extends ErrorGroup() {
+  object Resources extends ErrorGroupImpl("System Resources") {
     @Explanation("A system resource has been exhausted.")
     @Resolution(
       "Retry the transaction submission or provide the details to the participant operator."
@@ -110,7 +109,7 @@ object KVErrors extends ErrorGroup()(ErrorGroups.rootErrorClass) {
   }
 
   @Explanation("Errors that arise from an internal system misbehavior.")
-  object Internal extends ErrorGroup() {
+  object Internal extends ErrorGroupImpl("System Fault") {
 
     @Explanation("A rejection reason has not been set.")
     @Resolution("Contact support.")

@@ -3,18 +3,18 @@
 
 package com.daml.error.definitions
 
-import com.daml.error.{ErrorClass, ErrorGroup}
+import com.daml.error.{ErrorClass, ErrorGroupImpl}
 
 object ErrorGroups {
   val rootErrorClass: ErrorClass = ErrorClass.root()
 
-  object ParticipantErrorGroup extends ErrorGroup()(rootErrorClass) {
-    abstract class IndexErrorGroup extends ErrorGroup() {
-      abstract class DatabaseErrorGroup extends ErrorGroup()
+  object ParticipantErrorGroup extends ErrorGroupImpl("Participant")(rootErrorClass) {
+    abstract class IndexErrorGroup extends ErrorGroupImpl("Index") {
+      abstract class DatabaseErrorGroup extends ErrorGroupImpl("Database")
     }
-    abstract class LedgerApiErrorGroup extends ErrorGroup() {
-      abstract class CommandExecutionErrorGroup extends ErrorGroup()
-      abstract class PackageServiceErrorGroup extends ErrorGroup()
+    abstract class LedgerApiErrorGroup extends ErrorGroupImpl("Ledger API") {
+      abstract class CommandExecutionErrorGroup extends ErrorGroupImpl("Command Execution")
+      abstract class PackageServiceErrorGroup extends ErrorGroupImpl("Package Management Service")
     }
   }
 }

@@ -9,8 +9,7 @@ abstract class ErrorGroup()(implicit parent: ErrorClass) {
   // TODO error codes: Switch to using .getSimpleName when switching to JDK 9+
   implicit val errorClass: ErrorClass = resolveErrorClass()
 
-  private def resolveErrorClass(): ErrorClass = {
-    val name = fullClassName
+  def docsFriendlyName: String = fullClassName
       .replace("$", ".")
       .split("\\.")
       .view
@@ -18,9 +17,14 @@ abstract class ErrorGroup()(implicit parent: ErrorClass) {
       .find(segment => segment.trim.nonEmpty)
       .getOrElse(
         throw new IllegalStateException(
-          s"Could not parse full class name: '${fullClassName}' for the error class name"
+          s"Could not parse full class name: '$fullClassName' for the error class name"
         )
       )
-    parent.extend(Grouping(docName = name, fullClassName = fullClassName))
+
+  private def resolveErrorClass(): ErrorClass = {
+    parent.extend(Grouping(docsFriendlyName, fullClassName = fullClassName))
   }
 }
+
+class ErrorGroupImpl(override val docsFriendlyName: String)(implicit errorClass: ErrorClass)
+    extends ErrorGroup

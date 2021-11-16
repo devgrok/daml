@@ -77,7 +77,7 @@ final class ContractKeysIT extends LedgerTestSuite {
         beta,
         fetchFailure,
         Status.Code.INVALID_ARGUMENT,
-        LedgerApiErrors.CommandExecution.Interpreter.LookupErrors.ContractKeyNotFound,
+        LedgerApiErrors.ConsistencyErrors.ContractKeyNotFound,
         Some("couldn't find key"),
       )
       assertGrpcErrorRegex(
@@ -136,7 +136,7 @@ final class ContractKeysIT extends LedgerTestSuite {
         beta,
         fetchByKeyFailure,
         Status.Code.INVALID_ARGUMENT,
-        LedgerApiErrors.CommandExecution.Interpreter.LookupErrors.ContractKeyNotFound,
+        LedgerApiErrors.ConsistencyErrors.ContractKeyNotFound,
         Some("couldn't find key"),
       )
       assertGrpcErrorRegex(
@@ -242,7 +242,7 @@ final class ContractKeysIT extends LedgerTestSuite {
         alpha,
         aliceFailedFetch,
         Status.Code.INVALID_ARGUMENT,
-        LedgerApiErrors.CommandExecution.Interpreter.LookupErrors.ContractKeyNotFound,
+        LedgerApiErrors.ConsistencyErrors.ContractKeyNotFound,
         Some("couldn't find key"),
         checkDefiniteAnswerMetadata = true,
       )
@@ -315,7 +315,7 @@ final class ContractKeysIT extends LedgerTestSuite {
         ledger,
         failedFetch,
         Status.Code.INVALID_ARGUMENT,
-        LedgerApiErrors.CommandExecution.Interpreter.LookupErrors.ContractKeyNotFound,
+        LedgerApiErrors.ConsistencyErrors.ContractKeyNotFound,
         Some("couldn't find key"),
         checkDefiniteAnswerMetadata = true,
       )
@@ -394,7 +394,7 @@ final class ContractKeysIT extends LedgerTestSuite {
         ledger,
         failureBeforeCreation,
         Status.Code.INVALID_ARGUMENT,
-        LedgerApiErrors.CommandExecution.Interpreter.LookupErrors.ContractKeyNotFound,
+        LedgerApiErrors.ConsistencyErrors.ContractKeyNotFound,
         Some("dependency error: couldn't find key"),
         checkDefiniteAnswerMetadata = true,
       )
@@ -402,7 +402,7 @@ final class ContractKeysIT extends LedgerTestSuite {
         ledger,
         failureAfterConsuming,
         Status.Code.INVALID_ARGUMENT,
-        LedgerApiErrors.CommandExecution.Interpreter.LookupErrors.ContractKeyNotFound,
+        LedgerApiErrors.ConsistencyErrors.ContractKeyNotFound,
         Some("dependency error: couldn't find key"),
         checkDefiniteAnswerMetadata = true,
       )

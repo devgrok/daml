@@ -21,8 +21,13 @@ abstract class LoggingPackageServiceError(
   final override def logOnCreation: Boolean = true
 }
 
+@Explanation(
+  "This error group contains errors raised by the Package Management Service on package uploads."
+)
 object PackageServiceError extends LedgerApiErrors.PackageServiceErrorGroup {
-  object Reading extends ErrorGroup {
+
+  @Explanation("This error group contains package parsing errors raised during package upload.")
+  object Reading extends ErrorGroupImpl("Package Parsing") {
     @Explanation(
       """This error indicates that the supplied dar file name did not meet the requirements to be stored in the persistence store."""
     )

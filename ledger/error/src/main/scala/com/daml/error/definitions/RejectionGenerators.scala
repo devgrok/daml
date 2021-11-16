@@ -14,10 +14,10 @@ import io.grpc.protobuf.StatusProto
 class RejectionGenerators(conformanceMode: Boolean) {
   // TODO error codes: Remove conformance mode
   private val adjustErrors = Map(
-    LedgerApiErrors.CommandExecution.Interpreter.LookupErrors.ContractKeyNotFound -> Code.INVALID_ARGUMENT,
+    LedgerApiErrors.ConsistencyErrors.ContractKeyNotFound -> Code.INVALID_ARGUMENT,
     LedgerApiErrors.CommandExecution.Interpreter.ContractNotActive -> Code.INVALID_ARGUMENT,
     LedgerApiErrors.ConsistencyErrors.ContractNotFound -> Code.ABORTED,
-    LedgerApiErrors.CommandExecution.Interpreter.LookupErrors.ContractKeyNotFound -> Code.INVALID_ARGUMENT,
+    LedgerApiErrors.ConsistencyErrors.ContractKeyNotFound -> Code.INVALID_ARGUMENT,
     LedgerApiErrors.CommandExecution.Interpreter.GenericInterpretationError -> Code.INVALID_ARGUMENT,
   )
 
@@ -91,7 +91,7 @@ class RejectionGenerators(conformanceMode: Boolean) {
           LedgerApiErrors.ConsistencyErrors.ContractNotFound
             .Reject(renderedMessage, cid)
         case LfInterpretationError.ContractKeyNotFound(key) =>
-          LedgerApiErrors.CommandExecution.Interpreter.LookupErrors.ContractKeyNotFound
+          LedgerApiErrors.ConsistencyErrors.ContractKeyNotFound
             .Reject(renderedMessage, key)
         case _: LfInterpretationError.FailedAuthorization =>
           LedgerApiErrors.CommandExecution.Interpreter.AuthorizationError

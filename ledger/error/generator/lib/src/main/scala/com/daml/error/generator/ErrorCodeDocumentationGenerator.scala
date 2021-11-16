@@ -4,7 +4,15 @@
 package com.daml.error.generator
 
 import java.lang.reflect.Modifier
-import com.daml.error.{DeprecatedDocs, Deprecation, ErrorCode, ErrorGroup, Explanation, Resolution}
+import com.daml.error.{
+  DeprecatedDocs,
+  Deprecation,
+  ErrorCode,
+  ErrorGroup,
+  ErrorGroupImpl,
+  Explanation,
+  Resolution,
+}
 import com.daml.error.generator.ErrorCodeDocumentationGenerator.{
   acceptedTypeNames,
   deprecatedDocsTypeName,
@@ -36,7 +44,7 @@ class ErrorCodeDocumentationGenerator(prefixes: Array[String] = Array("com.daml"
     }
 
     val groups = getInstances[ErrorGroup]
-    groups.view.map(_.errorClass).groupBy(identity).collect {
+    groups.view.map(_.docsFriendlyName).groupBy(identity).collect {
       case (group, occurrences) if occurrences.size > 1 =>
         sys.error(
           s"There are ${occurrences.size} groups named $group but we require each group class name to be unique! " +
@@ -53,7 +61,8 @@ class ErrorCodeDocumentationGenerator(prefixes: Array[String] = Array("com.daml"
       .asScala
       .view
       .collect {
-        case clazz if !Modifier.isAbstract(clazz.getModifiers) =>
+        case clazz
+            if !Modifier.isAbstract(clazz.getModifiers) && clazz != classOf[ErrorGroupImpl] =>
           clazz.getDeclaredField("MODULE$").get(clazz).asInstanceOf[T]
       }
       .toSeq
@@ -79,7 +88,7 @@ class ErrorCodeDocumentationGenerator(prefixes: Array[String] = Array("com.daml"
       getGroupDocumentationAnnotations(group)
 
     GroupDocItem(
-      errorClass = group.errorClass,
+      docsFriendlyName = group.docsFriendlyName,
       className = group.fullClassName,
       explanation = explanation,
     )

@@ -61,7 +61,7 @@ final class DeprecatedSandboxClassicMemoryContractKeysIT extends LedgerTestSuite
         beta,
         fetchFailure,
         Status.Code.INVALID_ARGUMENT,
-        LedgerApiErrors.CommandExecution.Interpreter.LookupErrors.ContractKeyNotFound,
+        LedgerApiErrors.ConsistencyErrors.ContractKeyNotFound,
         Some("couldn't find key"),
       )
       assertGrpcErrorRegex(
@@ -120,7 +120,7 @@ final class DeprecatedSandboxClassicMemoryContractKeysIT extends LedgerTestSuite
         beta,
         fetchByKeyFailure,
         Status.Code.INVALID_ARGUMENT,
-        LedgerApiErrors.CommandExecution.Interpreter.LookupErrors.ContractKeyNotFound,
+        LedgerApiErrors.ConsistencyErrors.ContractKeyNotFound,
         Some("couldn't find key"),
       )
       assertGrpcErrorRegex(
@@ -226,7 +226,7 @@ final class DeprecatedSandboxClassicMemoryContractKeysIT extends LedgerTestSuite
         alpha,
         aliceFailedFetch,
         Status.Code.INVALID_ARGUMENT,
-        LedgerApiErrors.CommandExecution.Interpreter.LookupErrors.ContractKeyNotFound,
+        LedgerApiErrors.ConsistencyErrors.ContractKeyNotFound,
         Some("couldn't find key"),
         checkDefiniteAnswerMetadata = true,
       )
