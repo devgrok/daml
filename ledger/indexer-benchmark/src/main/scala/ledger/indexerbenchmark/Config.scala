@@ -23,6 +23,7 @@ case class Config(
     waitForUserInput: Boolean,
     minUpdateRate: Option[Long],
     enableSelfServiceErrorCodes: Boolean,
+    fromExport: Boolean,
 )
 
 object Config {
@@ -39,6 +40,7 @@ object Config {
     waitForUserInput = false,
     minUpdateRate = None,
     enableSelfServiceErrorCodes = true,
+    fromExport = true,
   )
 //
 //  private[this] val Parser: OptionParser[Config] =

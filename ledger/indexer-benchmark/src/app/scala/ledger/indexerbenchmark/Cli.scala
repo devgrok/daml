@@ -19,6 +19,10 @@ object Cli {
         .text("The name of the source of state updates.")
         .action((value, config) => config.copy(updateSource = value))
 
+      opt[Boolean]("from-export")
+        .text("From Ledger export")
+        .action((value, config) => config.copy(fromExport = value))
+
       opt[Boolean]("self-service-error-codes")
         .text("Enable self-service error codes")
         .action((value, config) => config.copy(enableSelfServiceErrorCodes = value))

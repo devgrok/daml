@@ -49,7 +49,6 @@ class IndexerBenchmark() {
   def run(
       createUpdates: Config => Future[Iterator[(Offset, Update)]],
       config: Config,
-      endless: Boolean = true,
   ): Future[Unit] = {
     newLoggingContext { implicit loggingContext =>
       val metricRegistry = new MetricRegistry
@@ -63,7 +62,7 @@ class IndexerBenchmark() {
       val indexerE = Executors.newWorkStealingPool()
       val indexerEC = ExecutionContext.fromExecutor(indexerE)
 
-      val readService = if(endless) {
+      val readService = if(!config.fromExport) {
         EndlessReadService(
           updatesNumber = config.updateCount.getOrElse(100000),
           name = "TestEndlessReadService",
