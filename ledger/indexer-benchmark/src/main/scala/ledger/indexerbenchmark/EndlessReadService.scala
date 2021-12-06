@@ -22,7 +22,6 @@ import com.daml.logging.{ContextualizedLogger, LoggingContext}
 import com.google.protobuf.ByteString
 
 import java.util.concurrent.atomic.AtomicInteger
-import scala.concurrent.duration._
 
 /** An infinite stream of state updates that fully conforms to the Daml ledger model.
  *
@@ -31,7 +30,6 @@ import scala.concurrent.duration._
  *  @param updatesPerSecond The maximum number of updates per second produced.
  */
 case class EndlessReadService(
-                               updatesPerSecond: Int,
                                updatesNumber: Long,
                                name: String,
                              )(implicit loggingContext: LoggingContext)
@@ -72,7 +70,6 @@ case class EndlessReadService(
       Source
         .fromIterator(() => Iterator.from(startIndex))
         .take(updatesNumber)
-        .throttle(updatesPerSecond, 1.second)
         .map {
           case i @ 1 =>
             offset(i) -> Update.ConfigurationChanged(

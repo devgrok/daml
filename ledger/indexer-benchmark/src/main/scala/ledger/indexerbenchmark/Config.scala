@@ -22,7 +22,6 @@ case class Config(
     indexerConfig: IndexerConfig,
     waitForUserInput: Boolean,
     minUpdateRate: Option[Long],
-    updateGenerationRate: Int,
     enableSelfServiceErrorCodes: Boolean,
 )
 
@@ -39,7 +38,6 @@ object Config {
     ),
     waitForUserInput = false,
     minUpdateRate = None,
-    updateGenerationRate = 50000,
     enableSelfServiceErrorCodes = true,
   )
 //
