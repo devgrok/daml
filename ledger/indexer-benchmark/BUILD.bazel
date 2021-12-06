@@ -19,7 +19,6 @@ da_scala_library(
     srcs = glob(["src/main/scala/**/*.scala"]),
     resources = glob(["src/main/resources/**/*"]),
     scala_deps = [
-        "@maven//:com_github_scopt_scopt",
         "@maven//:com_typesafe_akka_akka_actor",
         "@maven//:com_typesafe_akka_akka_stream",
     ],
@@ -27,7 +26,11 @@ da_scala_library(
         "//visibility:public",
     ],
     deps = [
+                "//daml-lf/archive:daml_lf_1.dev_archive_proto_java",
         "//daml-lf/data",
+                        "//daml-lf/language",
+                        "//daml-lf/transaction",
+                        "//daml-lf/transaction-test-lib",
         "//language-support/scala/bindings",
         "//ledger/ledger-api-health",
         "//ledger/ledger-configuration",
@@ -51,6 +54,7 @@ da_scala_library(
     srcs = glob(["src/app/scala/**/*.scala"]),
     resources = glob(["src/app/resources/**/*"]),
     scala_deps = [
+        "@maven//:com_github_scopt_scopt",
         "@maven//:com_typesafe_akka_akka_actor",
         "@maven//:com_typesafe_akka_akka_stream",
     ],
@@ -63,6 +67,7 @@ da_scala_library(
         "//ledger/ledger-configuration",
         "//ledger/ledger-offset",
         "//ledger/metrics",
+        "//ledger/participant-integration-api",
         "//ledger/participant-state",
         "//ledger/participant-state/kvutils",
         "//libs-scala/concurrent",

@@ -4,7 +4,6 @@
 package com.daml.ledger.indexerbenchmark
 
 import java.util.concurrent.{Executors, TimeUnit}
-
 import akka.NotUsed
 import akka.actor.ActorSystem
 import akka.stream.Materializer
@@ -50,6 +49,7 @@ class IndexerBenchmark() {
   def run(
       createUpdates: Config => Future[Iterator[(Offset, Update)]],
       config: Config,
+      endless: Boolean = true,
   ): Future[Unit] = {
     newLoggingContext { implicit loggingContext =>
       val metricRegistry = new MetricRegistry
@@ -63,11 +63,20 @@ class IndexerBenchmark() {
       val indexerE = Executors.newWorkStealingPool()
       val indexerEC = ExecutionContext.fromExecutor(indexerE)
 
-      println("Generating state updates...")
-      val updates = Await.result(createUpdates(config), Duration(10, "minute"))
+      val readService = if(endless) {
+        EndlessReadService(
+          updatesPerSecond = 50000,
+          updatesNumber = config.updateCount.getOrElse(100000),
+          name = "TestEndlessReadService",
+        )
+      } else {
+        println("Generating state updates...")
+        val updates = Await.result(createUpdates(config), Duration(10, "minute"))
 
-      println("Creating read service and indexer...")
-      val readService = createReadService(updates)
+        println("Creating read service and indexer...")
+        createReadService(updates)
+      }
+
       val indexerFactory = new JdbcIndexer.Factory(
         config.indexerConfig,
         readService,
@@ -218,14 +227,14 @@ class IndexerBenchmark() {
 object IndexerBenchmark {
   val LedgerId = "IndexerBenchmarkLedger"
 
-  def runAndExit(
-      args: Array[String],
-      updates: Config => Future[Iterator[(Offset, Update)]],
-  ): Unit =
-    Config.parse(args) match {
-      case Some(config) => IndexerBenchmark.runAndExit(config, updates)
-      case None => sys.exit(1)
-    }
+//  def runAndExit(
+//      args: Array[String],
+//      updates: Config => Future[Iterator[(Offset, Update)]],
+//  ): Unit =
+//    Config.parse(args) match {
+//      case Some(config) => IndexerBenchmark.runAndExit(config, updates)
+//      case None => sys.exit(1)
+//    }
 
   def runAndExit(
       config: Config,

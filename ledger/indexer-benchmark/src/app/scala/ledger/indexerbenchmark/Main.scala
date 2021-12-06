@@ -30,7 +30,10 @@ import scala.concurrent.Future
 
 object Main {
   def main(args: Array[String]): Unit =
-    IndexerBenchmark.runAndExit(args, name => loadLedgerExport(name))
+    Cli.parse(args) match {
+      case None => sys.exit(1)
+      case Some(config) => IndexerBenchmark.runAndExit(config, config => loadLedgerExport(config))
+    }
 
   private[this] def loadLedgerExport(config: Config): Future[Iterator[(Offset, Update)]] = {
     val path = Paths.get(config.updateSource)
@@ -77,7 +80,7 @@ object Main {
       keyValueSource,
       metrics,
       failOnUnexpectedEvent = false,
-      enableSelfServiceErrorCodes = true,
+      enableSelfServiceErrorCodes = config.enableSelfServiceErrorCodes,
     )
 
     // Note: this method is doing quite a lot of work to transform a sequence of write sets
