@@ -65,7 +65,7 @@ class IndexerBenchmark() {
 
       val readService = if(endless) {
         EndlessReadService(
-          updatesPerSecond = 50000,
+          updatesPerSecond = config.updateGenerationRate,
           updatesNumber = config.updateCount.getOrElse(100000),
           name = "TestEndlessReadService",
         )
