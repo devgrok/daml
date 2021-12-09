@@ -276,22 +276,6 @@ haskell_library(
     )
 
     http_archive(
-        name = "persistent-template",
-        build_file_content = """
-# persistent-template is an empty package
-load("@rules_haskell//haskell:defs.bzl", "haskell_library")
-haskell_library(
-    name = "persistent-template",
-    version = "2.12.0.0",
-    visibility = ["//visibility:public"],
-)
-""",
-        sha256 = "dc488b567d373ebfbf5f3df8bba240e6203d1b13556872648d5f0d228fd02c31",
-        strip_prefix = "persistent-template-2.12.0.0",
-        urls = ["https://hackage.haskell.org/package/persistent-template-2.12.0.0/persistent-template-2.12.0.0.tar.gz"],
-    )
-
-    http_archive(
         name = "proto3-suite",
         build_file_content = """
 load("@rules_haskell//haskell:cabal.bzl", "haskell_cabal_library")
@@ -669,7 +653,6 @@ exports_files(["stack.exe"], visibility = ["//visibility:public"])
             "js-flot": "@js_flot//:js-flot",
             "js-jquery": "@js_jquery//:js-jquery",
             "lsp-types": "@lsp-types//:lsp-types",
-            "persistent-template": "@persistent-template//:persistent-template",
             "proto3-suite": "@proto3-suite//:proto3-suite",
             "shake": "@shake//:shake",
             "xml-conduit": "@xml-conduit//:xml-conduit",
