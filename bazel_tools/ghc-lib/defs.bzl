@@ -141,6 +141,7 @@ exit 1
 export LANG=C.UTF-8
 
 local stack_path="$$(dirname $(execpath @stack//:bin/stack))"
+local alex_path="$$(dirname $(execpath @stackage-exe//alex))"
 local happy_path="$$(dirname $(execpath @stackage-exe//happy))"
 local autoconf_path="$$(dirname $(execpath @autoconf//:bin/autoconf))"
 local automake_path="$$(dirname $(execpath @automake//:bin/automake))"

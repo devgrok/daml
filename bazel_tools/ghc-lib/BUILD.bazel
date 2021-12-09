@@ -1,0 +1,6 @@
+load("@os_info//:os_info.bzl", "is_windows")
+
+alias(
+    name = "stack",
+    actual = "@stack_windows//:stack.exe" if is_windows else "@rules_haskell_stack//:stack",
+)
