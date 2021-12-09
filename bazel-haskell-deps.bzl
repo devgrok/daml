@@ -16,6 +16,7 @@ load("@bazel_tools//tools/build_defs/repo:http.bzl", "http_archive")
 load("@os_info//:os_info.bzl", "is_linux", "is_windows")
 load("@dadew//:dadew.bzl", "dadew_tool_home")
 load("@rules_haskell//haskell:cabal.bzl", "stack_snapshot")
+load("//bazel_tools/ghc-lib:repositories.bzl", "ghc_lib")
 
 GHC_LIB_REV = "1dd06147ccf58fc618bdd8383b24829e"
 GHC_LIB_SHA256 = "48ec2212bcf2861dc860c03f846e48b50e5c43eb1c3bc5e8bfec6ba3fe34c8e5"
@@ -125,6 +126,8 @@ haskell_library(
         strip_prefix = "daml-ghcide-%s" % GHCIDE_REV,
         urls = ["https://github.com/digital-asset/daml-ghcide/archive/%s.tar.gz" % GHCIDE_REV],
     )
+
+    ghc_lib(name = "ghc_lib_new")
 
     http_archive(
         name = "ghc_lib",
