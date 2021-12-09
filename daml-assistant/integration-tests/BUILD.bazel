@@ -220,6 +220,7 @@ da_haskell_library(
         "directory",
         "extra",
         "filepath",
+        "process",
         "tagged",
         "tasty",
         "tasty-hunit",
@@ -242,12 +243,14 @@ da_haskell_test(
     args = [
         "$(location @nodejs//:npm_bin)",
         "$(location @nodejs//:node_bin)",
+        "$(location @grpcurl_nix//:bin)",
         "--project-name",
         "not-create-daml-app",
     ],
     data = [
         "@nodejs//:node_bin",
         "@nodejs//:npm_bin",
+        "@grpcurl_nix//:bin",
     ],
     hackage_deps = ["base"],
     main_function = "DA.Daml.Assistant.CreateDamlAppTestsMain.main",

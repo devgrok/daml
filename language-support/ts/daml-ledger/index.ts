@@ -40,6 +40,17 @@ const partyInfoDecoder: jtv.Decoder<PartyInfo> =
     isLocal: jtv.boolean(),
   });
 
+export type User = {
+  userId: string;
+  primaryParty?: Party;
+}
+
+const userDecoder: jtv.Decoder<User> =
+  jtv.object({
+    userId: jtv.string(),
+    primaryParty: jtv.optional(jtv.string()),
+  });
+
 export type PackageId = string;
 
 const decode = <R>(decoder: jtv.Decoder<R>, data: unknown): R => {
@@ -1389,6 +1400,11 @@ class Ledger {
   async allocateParty(partyOpt: {identifierHint?: string; displayName?: string}): Promise<PartyInfo> {
     const json = await this.submit('v1/parties/allocate', partyOpt);
     return decode(partyInfoDecoder, json);
+  }
+
+  async getUser(): Promise<User> {
+    const json = await this.submit('v1/user', undefined, 'get');
+    return decode(userDecoder, json);
   }
 
   /**

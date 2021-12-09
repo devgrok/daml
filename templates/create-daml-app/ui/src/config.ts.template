@@ -3,8 +3,14 @@
 
 import { encode } from 'jwt-simple';
 
+export type UserManagement = {
+  tokenPayload: (loginName: string, ledgerId: string) => Object,
+  primaryParty: (loginName: string, token: string) => Promise<string>,
+};
+
 export type Insecure = {
   provider: "none",
+  userManagement: UserManagement,
   makeToken: (party: string) => string,
   ledgerId: string
 };
@@ -21,6 +27,33 @@ export type Auth0 =  {
 };
 
 export type Authentication = Insecure | DamlHub | Auth0;
+
+// This needs to be used for ledgers in SDK < 2.0.0 and VMBC <= 1.6
+export const noUserManagement: UserManagement = {
+  tokenPayload: (loginName: string, ledgerId: string) =>
+  ({
+    "https://daml.com/ledger-api": {
+      "ledgerId": ledgerId,
+      "applicationId": '__PROJECT_NAME__',
+      "actAs": [loginName]
+    }
+  }),
+  primaryParty: async (loginName: string, token: string) => loginName,
+};
+
+// Used on SDK >= 2.0.0 with the exception of VMBC
+export const withUserManagement: UserManagement = {
+  tokenPayload: (loginName: string, ledgerId: string) =>
+  ({
+    sub: loginName,
+  }),
+  primaryParty: async (loginName, token: string) => `p${loginName}`
+};
+
+export const userManagement: UserManagement =
+  // We default to assuming that user management is enabled so we interpret everything that
+  // isn’t explicitly "false" as supporting user management.
+  process.env.REACT_APP_SUPPORTS_USERMANAGEMENT?.toLowerCase() !== "false" ? withUserManagement : noUserManagement;
 
 export const authConfig: Authentication = (() => {
   if (window.location.hostname.endsWith('.projectdabl.com')) {
@@ -45,14 +78,9 @@ export const authConfig: Authentication = (() => {
     const auth: Insecure = {
       provider: "none",
       ledgerId: ledgerId,
-      makeToken: (party) => {
-        const payload = {
-          "https://daml.com/ledger-api": {
-            "ledgerId": ledgerId,
-            "applicationId": '__PROJECT_NAME__',
-            "actAs": [party]
-          }
-        }
+      userManagement: userManagement,
+      makeToken: (loginName) => {
+        const payload = userManagement.tokenPayload(loginName, ledgerId);
         return encode(payload, "secret", "HS256");
       }
     };

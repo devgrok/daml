@@ -63,7 +63,10 @@ const LoginScreen: React.FC<Props> = ({onLogin}) => {
     const [username, setUsername] = React.useState('');
     const handleLogin = async (event: React.FormEvent) => {
       event.preventDefault();
-      await login({party: username,
+      const token = auth.makeToken(username);
+      const ledger = new Ledger({token: token, httpBaseUrl});
+      const user = await ledger.getUser();
+      await login({party: user.primaryParty!,
                    token: auth.makeToken(username)});
     }
     return wrap(<>
