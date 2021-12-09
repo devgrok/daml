@@ -136,6 +136,8 @@ def ghc():
             "@automake//:bin",
             "@automake//:bin/automake",
             "@cabal-install//:bin/cabal",
+            "@ghc865//:bin",
+            "@ghc865//:bin/ghc",
             "@ghc-lib-gen",
             "@gnumake//:bin/make",
             "@stackage-exe//alex",
@@ -151,6 +153,7 @@ def ghc():
 set -euo pipefail
 echo "!!! PWD $$PWD"
 echo "!!! alex $(execpath @stackage-exe//alex)"
+echo "!!! ghc $(execpath @ghc865//:bin/ghc)"
 echo "!!! happy $(execpath @stackage-exe//happy)"
 echo "!!! autoconf $(execpath @autoconf//:bin/autoconf)"
 echo "!!! automake $(execpath @automake//:bin/automake)"
@@ -165,11 +168,12 @@ alex_path="$$(get_path $(execpath @stackage-exe//alex))"
 autoconf_path="$$(get_path $(execpath @autoconf//:bin/autoconf))"
 automake_path="$$(get_path $(execpath @automake//:bin/automake))"
 cabal_path="$$(get_path $(execpath @cabal-install//:bin/cabal))"
+ghc_path="$$(get_path $(execpath @ghc865//:bin/ghc))"
 gnumake_path="$$(get_path $(execpath @gnumake//:bin/make))"
 happy_path="$$(get_path $(execpath @stackage-exe//happy))"
 stack_path="$$(get_path $(execpath @stack//:bin/stack))"
 xz_path="$$(get_path $(execpath @xz//:bin/xz))"
-export PATH="$$alex_path:$$happy_path:$$autoconf_path:$$automake_path:$$cabal_path:$$gnumake_path:$$stack_path:$$xz_path:$$PATH"
+export PATH="$$alex_path:$$happy_path:$$autoconf_path:$$automake_path:$$cabal_path:$$ghc_path:$$gnumake_path:$$stack_path:$$xz_path:$$PATH"
 
 echo "!!! PATH $$PATH"
 

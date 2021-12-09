@@ -863,6 +863,15 @@ nixpkgs_package(
 )
 
 nixpkgs_package(
+    name = "ghc865",
+    attribute_path = "ghc865",
+    fail_not_supported = False,
+    nix_file = "//nix:bazel.nix",
+    nix_file_deps = common_nix_file_deps,
+    repositories = dev_env_nix_repos,
+)
+
+nixpkgs_package(
     name = "gnumake",
     attribute_path = "gnumake",
     fail_not_supported = False,

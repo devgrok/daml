@@ -74,6 +74,7 @@ let shared = rec {
   ghcPkgs = pkgs.haskell.packages.integer-simple.ghc8107;
 
   ghc = ghcPkgs.ghc;
+  ghc865 = pkgs.haskell.compiler.ghc865Binary;
   # Deliberately not taken from ghcPkgs. This is a fully
   # static executable so it doesn’t pull in another GHC
   # and upstream nixpkgs does not cache packages for
