@@ -62,3 +62,14 @@ def ghc_lib():
             "@stackage//:process",
         ],
     )
+    native.genrule(
+        name = "ghc-lib-parser",
+        srcs = [":ghc-srcs"],
+        tools = [":ghc-lib-gen"],
+        outs = ["MISSING"],
+        cmd = """\
+echo "!!! PWD $$PWD"
+echo "!!! ghc-lib-gen $(execpath :ghc-lib-gen)"
+exit 1
+""",
+    )
