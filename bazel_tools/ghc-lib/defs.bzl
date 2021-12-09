@@ -139,11 +139,15 @@ def ghc():
             "@ghc865//:bin",
             "@ghc865//:bin/ghc",
             "@ghc-lib-gen",
+            "@git//:bin/git",
             "@gnumake//:bin/make",
             "@stackage-exe//alex",
             "@stackage-exe//happy",
             "@stack//:bin/stack",
             "@xz//:bin/xz",
+        ],
+        toolchains = [
+            "@rules_cc//cc:current_cc_toolchain",
         ],
         outs = [
             "ghc-lib-parser.cabal",
@@ -168,14 +172,18 @@ alex_path="$$(get_path $(execpath @stackage-exe//alex))"
 autoconf_path="$$(get_path $(execpath @autoconf//:bin/autoconf))"
 automake_path="$$(get_path $(execpath @automake//:bin/automake))"
 cabal_path="$$(get_path $(execpath @cabal-install//:bin/cabal))"
+cc_path="$$(get_path $(CC))"
 ghc_path="$$(get_path $(execpath @ghc865//:bin/ghc))"
+git_path="$$(get_path $(execpath @git//:bin/git))"
 gnumake_path="$$(get_path $(execpath @gnumake//:bin/make))"
 happy_path="$$(get_path $(execpath @stackage-exe//happy))"
 stack_path="$$(get_path $(execpath @stack//:bin/stack))"
 xz_path="$$(get_path $(execpath @xz//:bin/xz))"
-export PATH="$$alex_path:$$happy_path:$$autoconf_path:$$automake_path:$$cabal_path:$$ghc_path:$$gnumake_path:$$stack_path:$$xz_path:$$PATH"
+export PATH="$$alex_path:$$happy_path:$$autoconf_path:$$automake_path:$$cabal_path:$$cc_path:$$ghc_path:$$git_path:$$gnumake_path:$$stack_path:$$xz_path:$$PATH"
 
 echo "!!! PATH $$PATH"
+
+export CC="$$(realpath $(CC))"
 
 GHC="$$(get_path $(execpath :README.md))"
 TMP=$$(mktemp -d)
@@ -184,6 +192,8 @@ echo "!!! TMP $$TMP"
 cp -rLt $$TMP $$GHC/.
 
 export STACK_ROOT="$$TMP/.stack"
+mkdir -p $$STACK_ROOT
+echo -e "system-ghc: true\\ninstall-ghc: false" > $$STACK_ROOT/config.yaml
 
 $(execpath @ghc-lib-gen) $$TMP --ghc-lib-parser --ghc-flavor={ghc_flavor}
 sed -i.bak \\

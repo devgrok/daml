@@ -16,6 +16,7 @@ let shared = rec {
     gawk
     gnumake
     gnupatch
+    git
     gnutar
     grpc
     grpcurl
