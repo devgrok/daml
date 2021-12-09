@@ -11,7 +11,6 @@ GHC_SHA256 = "26891fb947ed928d3b515a827060ead1a677a4eb8313d29ab57cdf9d481af04b"
 GHC_PATCHES = [
     Label("@//bazel_tools/ghc-lib:ghc-daml-prim.patch"),
 ]
-GHC_FLAVOR = "da-ghc-8.8.1"
 
 def _ghc_lib_impl(repository_ctx):
     #
