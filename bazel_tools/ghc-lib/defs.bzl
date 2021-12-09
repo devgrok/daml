@@ -126,21 +126,29 @@ def ghc():
     )
     native.genrule(
         name = "ghc-lib-parser",
-        srcs = [":srcs"],
+        srcs = [
+            ":srcs",
+            ":README.md",
+        ],
         tools = [
             "@autoconf//:bin",
+            "@autoconf//:bin/autoconf",
             "@automake//:bin",
-            "@cabal-install//:bin",
+            "@automake//:bin/automake",
+            "@cabal-install//:bin/cabal",
             "@ghc-lib-gen",
+            "@gnumake//:bin/make",
             "@stackage-exe//alex",
             "@stackage-exe//happy",
-            "@stack//:bin",
+            "@stack//:bin/stack",
+            "@xz//:bin/xz",
         ],
         outs = [
             "ghc-lib-parser.cabal",
             "ghc-lib-parser-{}.tar.gz".format(GHC_LIB_VERSION),
         ],
         cmd = """\
+set -euo pipefail
 echo "!!! PWD $$PWD"
 echo "!!! alex $(execpath @stackage-exe//alex)"
 echo "!!! happy $(execpath @stackage-exe//happy)"
@@ -152,24 +160,33 @@ echo "!!! ghc-lib-gen $(execpath @ghc-lib-gen)"
 
 export LANG=C.UTF-8
 
-local alex_path="$$(dirname $(execpath @stackage-exe//alex))"
-local happy_path="$$(dirname $(execpath @stackage-exe//happy))"
-local autoconf_path="$$(dirname $(execpath @autoconf//:bin/autoconf))"
-local automake_path="$$(dirname $(execpath @automake//:bin/automake))"
-local cabal_path="$$(dirname $(execpath @cabal-install//:bin/cabal))"
-local stack_path="$$(dirname $(execpath @stack//:bin/stack))"
-export PATH="$$stack_path:$$happy_path:$$autoconf_path:$$automake_path:$PATH"
+get_path() {{ echo "$$(realpath "$$(dirname "$$1")")"; }}
+alex_path="$$(get_path $(execpath @stackage-exe//alex))"
+autoconf_path="$$(get_path $(execpath @autoconf//:bin/autoconf))"
+automake_path="$$(get_path $(execpath @automake//:bin/automake))"
+cabal_path="$$(get_path $(execpath @cabal-install//:bin/cabal))"
+gnumake_path="$$(get_path $(execpath @gnumake//:bin/make))"
+happy_path="$$(get_path $(execpath @stackage-exe//happy))"
+stack_path="$$(get_path $(execpath @stack//:bin/stack))"
+xz_path="$$(get_path $(execpath @xz//:bin/xz))"
+export PATH="$$alex_path:$$happy_path:$$autoconf_path:$$automake_path:$$cabal_path:$$gnumake_path:$$stack_path:$$xz_path:$$PATH"
 
-echo "!!! PATH $PATH"
+echo "!!! PATH $$PATH"
 
-local GHC="$$(dirname $(execpath @da-ghc//:README.md))"
+GHC="$$(get_path $(execpath :README.md))"
+TMP=$$(mktemp -d)
+#trap "rm -rf $$TMP" EXIT
+echo "!!! TMP $$TMP"
+cp -rLt $$TMP $$GHC/.
 
-$(execpath @ghc-lib-gen) $$GHC --ghc-lib-parser --ghc-flavor={ghc_flavor}
+export STACK_ROOT="$$TMP/.stack"
+
+$(execpath @ghc-lib-gen) $$TMP --ghc-lib-parser --ghc-flavor={ghc_flavor}
 sed -i.bak \\
   -e 's#version: 0.1.0#version: {ghc_lib_version}#' \\
-  $$GHC/ghc-lib-parser.cabal
-cp $$GHC/ghc-lib-parser.cabal $(execpath ghc-lib-parser.cabal)
-(cd $$GHC; cabal sdist -o $$PWD/$(execpath ghc-lib-parser-{ghc_lib_version}.tar.gz))
+  $$TMP/ghc-lib-parser.cabal
+cp $$TMP/ghc-lib-parser.cabal $(execpath ghc-lib-parser.cabal)
+(cd $$TMP; cabal sdist -o $$PWD/$(execpath ghc-lib-parser-{ghc_lib_version}.tar.gz))
 """.format(
             ghc_flavor = GHC_FLAVOR,
             ghc_lib_version = GHC_LIB_VERSION,
