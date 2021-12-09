@@ -73,3 +73,9 @@ echo "!!! ghc-lib-gen $(execpath :ghc-lib-gen)"
 exit 1
 """,
     )
+
+def ghc_lib_gen():
+    pass
+
+def ghc():
+    pass
