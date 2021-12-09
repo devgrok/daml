@@ -14,6 +14,7 @@ let shared = rec {
     curl
     docker
     gawk
+    gnumake
     gnupatch
     gnutar
     grpc
@@ -32,6 +33,7 @@ let shared = rec {
     python3
     stack
     toxiproxy
+    xz
     zip
   ;
 
