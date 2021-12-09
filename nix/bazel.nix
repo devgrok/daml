@@ -14,6 +14,7 @@ let shared = rec {
     curl
     docker
     gawk
+    gcc
     gnumake
     gnupatch
     git
