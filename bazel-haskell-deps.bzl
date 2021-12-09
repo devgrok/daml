@@ -654,7 +654,7 @@ exports_files(["stack.exe"], visibility = ["//visibility:public"])
             "zip-archive",
         ] + (["unix"] if not is_windows else ["Win32"]),
         components = {
-            "cabal-install": ["exe:cabal"],
+            "cabal-install": ["exe"],
             "hpp": ["lib", "exe"],
             "stack": ["exe"],
         },
