@@ -128,24 +128,39 @@ def ghc():
         name = "ghc-lib-parser",
         srcs = [":srcs"],
         tools = [
+            "@autoconf//:bin",
+            "@automake//:bin",
+            "@cabal-install//:bin",
             "@ghc-lib-gen",
+            "@stackage-exe//alex",
             "@stackage-exe//happy",
+            "@stack//:bin",
         ],
-        outs = ["MISSING"],
+        outs = [
+            "ghc-lib-parser.cabal",
+            "ghc-lib-parser-{}.tar.gz".format(GHC_LIB_VERSION),
+        ],
         cmd = """\
 echo "!!! PWD $$PWD"
+echo "!!! alex $(execpath @stackage-exe//alex)"
 echo "!!! happy $(execpath @stackage-exe//happy)"
+echo "!!! autoconf $(execpath @autoconf//:bin/autoconf)"
+echo "!!! automake $(execpath @automake//:bin/automake)"
+echo "!!! cabal-install $(execpath @cabal-install//:bin/cabal)"
+echo "!!! stack $(execpath @stack//:bin/stack)"
 echo "!!! ghc-lib-gen $(execpath @ghc-lib-gen)"
-exit 1
 
 export LANG=C.UTF-8
 
-local stack_path="$$(dirname $(execpath @stack//:bin/stack))"
 local alex_path="$$(dirname $(execpath @stackage-exe//alex))"
 local happy_path="$$(dirname $(execpath @stackage-exe//happy))"
 local autoconf_path="$$(dirname $(execpath @autoconf//:bin/autoconf))"
 local automake_path="$$(dirname $(execpath @automake//:bin/automake))"
+local cabal_path="$$(dirname $(execpath @cabal-install//:bin/cabal))"
+local stack_path="$$(dirname $(execpath @stack//:bin/stack))"
 export PATH="$$stack_path:$$happy_path:$$autoconf_path:$$automake_path:$PATH"
+
+echo "!!! PATH $PATH"
 
 local GHC="$$(dirname $(execpath @da-ghc//:README.md))"
 
@@ -153,5 +168,10 @@ $(execpath @ghc-lib-gen) $$GHC --ghc-lib-parser --ghc-flavor={ghc_flavor}
 sed -i.bak \\
   -e 's#version: 0.1.0#version: {ghc_lib_version}#' \\
   $$GHC/ghc-lib-parser.cabal
-""",
+cp $$GHC/ghc-lib-parser.cabal $(execpath ghc-lib-parser.cabal)
+(cd $$GHC; cabal sdist -o $$PWD/$(execpath ghc-lib-parser-{ghc_lib_version}.tar.gz))
+""".format(
+            ghc_flavor = GHC_FLAVOR,
+            ghc_lib_version = GHC_LIB_VERSION,
+        ),
     )
