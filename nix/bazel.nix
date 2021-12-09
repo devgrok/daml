@@ -6,27 +6,31 @@
 }:
 let shared = rec {
   inherit (pkgs)
+    autoconf
+    automake
     buf
+    cabal-install
     coreutils
     curl
     docker
     gawk
+    gnupatch
     gnutar
     grpc
     grpcurl
     gzip
     imagemagick
-    jdk8
     jdk11
+    jdk8
     jekyll
     jq
     netcat-gnu
     nodejs
     openssl
-    gnupatch
     patchelf
     protobuf3_8
     python3
+    stack
     toxiproxy
     zip
   ;

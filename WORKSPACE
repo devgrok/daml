@@ -833,6 +833,44 @@ filegroup(
     repositories = dev_env_nix_repos,
 )
 
+# TODO[AH] Import these for Windows as well
+
+nixpkgs_package(
+    name = "autoconf",
+    attribute_path = "autoconf",
+    fail_not_supported = False,
+    nix_file = "//nix:bazel.nix",
+    nix_file_deps = common_nix_file_deps,
+    repositories = dev_env_nix_repos,
+)
+
+nixpkgs_package(
+    name = "automake",
+    attribute_path = "automake",
+    fail_not_supported = False,
+    nix_file = "//nix:bazel.nix",
+    nix_file_deps = common_nix_file_deps,
+    repositories = dev_env_nix_repos,
+)
+
+nixpkgs_package(
+    name = "cabal-install",
+    attribute_path = "cabal-install",
+    fail_not_supported = False,
+    nix_file = "//nix:bazel.nix",
+    nix_file_deps = common_nix_file_deps,
+    repositories = dev_env_nix_repos,
+)
+
+nixpkgs_package(
+    name = "stack",
+    attribute_path = "stack",
+    fail_not_supported = False,
+    nix_file = "//nix:bazel.nix",
+    nix_file_deps = common_nix_file_deps,
+    repositories = dev_env_nix_repos,
+)
+
 nixpkgs_package(
     name = "postgresql_nix",
     attribute_path = "postgresql_10",
