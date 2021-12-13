@@ -226,6 +226,8 @@ class Endpoints(
         get apply concat(
           path("query") & withTimer(queryAllTimer) apply
             toRoute(retrieveAll(req)),
+          path("user") & withFetchTimer apply toRoute(getUser(req)),
+          path("user" / "rights") & withFetchTimer apply toRoute(listUserRights(req)),
           path("parties") & withTimer(getPartyTimer) apply
             toRoute(allParties(req)),
           path("packages") apply toRoute(listPackages(req)),
@@ -468,6 +470,24 @@ class Endpoints(
   ): ET[domain.SyncResponse[List[domain.PartyDetails]]] =
     proxyWithoutCommand((jwt, _) => partiesService.allParties(jwt))(req)
       .flatMap(pd => either(pd map (domain.OkResponse(_))))
+
+  def listUserRights(req: HttpRequest)(implicit
+      lc: LoggingContextOf[InstanceUUID with RequestID]
+  ): ET[domain.SyncResponse[domain.UserRights]] =
+    for {
+      res <- eitherT(input(req)): ET[(Jwt, String)]
+      (jwt, _) = res
+      rights <- EitherT.rightT(userManagementClient.listAuthenticatedUserRights(Some(jwt.value)))
+    } yield domain.OkResponse(domain.UserRights.fromListUserRights(rights))
+
+  def getUser(req: HttpRequest)(implicit
+      lc: LoggingContextOf[InstanceUUID with RequestID]
+  ): ET[domain.SyncResponse[domain.UserDetails]] =
+    for {
+      res <- eitherT(input(req)): ET[(Jwt, String)]
+      (jwt, _) = res
+      user <- EitherT.rightT(userManagementClient.getAuthenticatedUser(Some(jwt.value)))
+    } yield domain.OkResponse(domain.UserDetails(user.id, user.primaryParty))
 
   def parties(req: HttpRequest)(implicit
       lc: LoggingContextOf[InstanceUUID with RequestID]
