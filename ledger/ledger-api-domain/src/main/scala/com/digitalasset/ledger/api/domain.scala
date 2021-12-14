@@ -8,6 +8,7 @@ import com.daml.ledger.configuration.Configuration
 import com.daml.lf.command.{Commands => LfCommands}
 import com.daml.lf.data.Ref
 import com.daml.lf.data.Ref.LedgerString.ordering
+import com.daml.lf.data.Ref.Party
 import com.daml.lf.data.Time.Timestamp
 import com.daml.lf.data.logging._
 import com.daml.lf.transaction.GlobalKey
@@ -400,10 +401,35 @@ object domain {
       primaryParty: Option[Ref.Party],
   )
 
-  sealed abstract class UserRight extends Product with Serializable
+  sealed abstract class UserRight extends Product with Serializable {
+    val internal_id: Int
+    def target_party: Option[Ref.Party]
+  }
   object UserRight {
-    final case object ParticipantAdmin extends UserRight
-    final case class CanActAs(party: Ref.Party) extends UserRight
-    final case class CanReadAs(party: Ref.Party) extends UserRight
+    final case object ParticipantAdmin extends UserRight {
+      // Ensure this maps to gRPC field numbers
+      override val internal_id: Int = 1
+
+      override def target_party: Option[Party] = None
+    }
+    final case class CanActAs(party: Ref.Party) extends UserRight {
+      override val internal_id: Int = 2
+
+      override def target_party: Option[Party] = Some(party)
+    }
+    final case class CanReadAs(party: Ref.Party) extends UserRight {
+      override val internal_id: Int = 3
+
+      override def target_party: Option[Party] = Some(party)
+    }
+
+    def from(internal_id: Int, party: Option[Party] = None): UserRight = {
+      (internal_id, party) match {
+        case (1, None) => ParticipantAdmin
+        case (2, Some(party)) => CanActAs(party)
+        case (3, Some(party)) => CanReadAs(party)
+        case _ => throw new RuntimeException // TODO self-service error codes
+      }
+    }
   }
 }

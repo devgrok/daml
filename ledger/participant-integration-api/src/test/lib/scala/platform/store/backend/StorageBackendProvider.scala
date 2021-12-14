@@ -90,6 +90,7 @@ case class TestBackend(
     stringInterning: StringInterningStorageBackend,
     ledgerEndCache: MutableLedgerEndCache,
     stringInterningSupport: StringInterning,
+    userManagement: UserManagementStorageBackend,
 )
 
 object TestBackend {
@@ -114,6 +115,7 @@ object TestBackend {
       stringInterning = storageBackendFactory.createStringInterningStorageBackend,
       ledgerEndCache = ledgerEndCache,
       stringInterningSupport = stringInterning,
+      userManagement = storageBackendFactory.createUserManagementStorageBackend,
     )
   }
 }

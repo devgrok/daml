@@ -5,7 +5,7 @@ package com.daml.platform.store.backend
 
 import java.sql.Connection
 
-import com.daml.ledger.api.domain.{LedgerId, ParticipantId, PartyDetails}
+import com.daml.ledger.api.domain.{LedgerId, ParticipantId, PartyDetails, User, UserRight}
 import com.daml.ledger.api.v1.command_completion_service.CompletionStreamResponse
 import com.daml.ledger.configuration.Configuration
 import com.daml.ledger.offset.Offset
@@ -417,4 +417,33 @@ trait StringInterningStorageBackend {
   def loadStringInterningEntries(fromIdExclusive: Int, untilIdInclusive: Int)(
       connection: Connection
   ): Iterable[(Int, String)]
+}
+
+trait UserManagementStorageBackend {
+  def createUser(user: User, rights: Set[UserRight])(
+      connection: Connection
+  ): (Option[Long], Long)
+
+  def getUser(id: Ref.UserId)(
+      connection: Connection
+  ): Option[User]
+
+  def deleteUser(id: Ref.UserId)(
+      connection: Connection
+  ): Unit
+
+  // returns newlyGranted
+  def addUserRights(id: Ref.UserId, rights: Set[UserRight])(
+      connection: Connection
+  ): Set[UserRight]
+
+  def getUserRights(id: Ref.UserId)(
+      connection: Connection
+  ): Set[UserRight]
+
+  // returns effectivelyRevoked
+  def deleteUserRights(id: Ref.UserId, rights: Set[UserRight])(
+      connection: Connection
+  ): Set[UserRight]
+
 }
