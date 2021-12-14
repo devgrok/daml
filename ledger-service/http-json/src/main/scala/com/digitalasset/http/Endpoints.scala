@@ -475,18 +475,20 @@ class Endpoints(
       lc: LoggingContextOf[InstanceUUID with RequestID]
   ): ET[domain.SyncResponse[domain.UserRights]] =
     for {
-      res <- eitherT(input(req)): ET[(Jwt, String)]
-      (jwt, _) = res
-      rights <- EitherT.rightT(userManagementClient.listAuthenticatedUserRights(Some(jwt.value)))
+      jwt <- eitherT(input(req)).bimap(it => it: Error, _._1)
+      userId <- decodeAndParseUserIdFromToken(jwt, decodeJwt).leftMap(it => it: Error)
+      rights <- EitherT.rightT(
+        userManagementClient.listUserRights(userId, Some(jwt.value))
+      )
     } yield domain.OkResponse(domain.UserRights.fromListUserRights(rights))
 
   def getUser(req: HttpRequest)(implicit
       lc: LoggingContextOf[InstanceUUID with RequestID]
   ): ET[domain.SyncResponse[domain.UserDetails]] =
     for {
-      res <- eitherT(input(req)): ET[(Jwt, String)]
-      (jwt, _) = res
-      user <- EitherT.rightT(userManagementClient.getAuthenticatedUser(Some(jwt.value)))
+      jwt <- eitherT(input(req)).bimap(it => it: Error, _._1)
+      userId <- decodeAndParseUserIdFromToken(jwt, decodeJwt).leftMap(it => it: Error)
+      user <- EitherT.rightT(userManagementClient.getUser(userId, Some(jwt.value)))
     } yield domain.OkResponse(domain.UserDetails(user.id, user.primaryParty))
 
   def parties(req: HttpRequest)(implicit
