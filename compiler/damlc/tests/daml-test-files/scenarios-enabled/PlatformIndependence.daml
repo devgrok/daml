@@ -11,7 +11,7 @@ Make sure that they are always encoded as POSIX filepath, regardless the compili
 checkFilePath : HasCallStack => Scenario ()
 checkFilePath = do
   let [fs] = [ srcLocFile srcLoc | (_t, srcLoc) <- getCallStack callStack]
-  assert $ "compiler/damlc/tests/daml-test-files/PlatformIndependence.daml" `isSuffixOf` fs
+  assert $ "compiler/damlc/tests/daml-test-files/scenarios-enabled/PlatformIndependence.daml" `isSuffixOf` fs
 
 test : Scenario ()
 test = checkFilePath

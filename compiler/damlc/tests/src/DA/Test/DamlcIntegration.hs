@@ -172,10 +172,11 @@ getIntegrationTests registerTODO scenarioService = do
     putStrLn $ "rtsSupportsBoundThreads: " ++ show rtsSupportsBoundThreads
     do n <- getNumCapabilities; putStrLn $ "getNumCapabilities: " ++ show n
 
-    damlTests <- getDamlTestFiles "compiler/damlc/tests/daml-test-files"
-    bondTradingTests <- getBondTradingTestFiles
-    let plainTests = damlTests <> bondTradingTests
-    noScenariosEnabledTests <- getDamlTestFiles "compiler/damlc/tests/daml-test-files/no-scenarios-enabled"
+    plainTests <- getDamlTestFiles "compiler/damlc/tests/daml-test-files"
+    scenariosEnabledTests <-
+      (<>)
+        <$> getDamlTestFiles "compiler/damlc/tests/daml-test-files/scenarios-enabled"
+        <*> getBondTradingTestFiles
 
     let outdir = "compiler/damlc/output"
     createDirectoryIfMissing True outdir
@@ -209,12 +210,12 @@ getIntegrationTests registerTODO scenarioService = do
             shutdown
             $ \service ->
           withResource
-            (mkIde opts { optEnableScenarios = EnableScenarios False })
+            (mkIde opts { optEnableScenarios = EnableScenarios True })
             shutdown
-            $ \serviceNoScenariosEnabled ->
+            $ \serviceScenariosEnabled ->
           testGroup ("Tests for DAML-LF " ++ renderPretty version) $
             map (testCase version service outdir registerTODO) plainTests <>
-            map (testCase version serviceNoScenariosEnabled outdir registerTODO) noScenariosEnabledTests
+            map (testCase version serviceScenariosEnabled outdir registerTODO) scenariosEnabledTests
 
     pure tree
 
