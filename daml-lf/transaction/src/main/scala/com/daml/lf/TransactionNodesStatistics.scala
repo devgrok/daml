@@ -54,7 +54,10 @@ final case class TransactionNodesStats(
   def nodes: Int = actions + rollbacks
 }
 
-final case class TransactionNodesStatistics(committed: TransactionNodesStats, rolledBack: TransactionNodesStats)
+final case class TransactionNodesStatistics(
+    committed: TransactionNodesStats,
+    rolledBack: TransactionNodesStats,
+)
 
 object TransactionNodesStatistics {
 

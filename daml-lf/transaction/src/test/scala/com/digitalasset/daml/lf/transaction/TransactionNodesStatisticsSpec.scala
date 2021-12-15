@@ -142,11 +142,12 @@ class TransactionNodesStatisticsSpec
 
       for (i <- 1 to testIterations) {
         addAllNodes(b, exeId) // one additional nodes of each types
-        inside(TransactionNodesStatistics.stats(b.build())) { case TransactionNodesStatistics(committed, rolledBack) =>
-          // There are twice more nonconsumming exercises by cid are double because
-          // we use a extra one to nest the other node of the next loop
-          committed shouldBe TransactionNodesStats(i, i, 2 * i, i, i, i, i, i, i)
-          rolledBack shouldBe TransactionNodesStatistics.EmptyStats
+        inside(TransactionNodesStatistics.stats(b.build())) {
+          case TransactionNodesStatistics(committed, rolledBack) =>
+            // There are twice more nonconsumming exercises by cid are double because
+            // we use a extra one to nest the other node of the next loop
+            committed shouldBe TransactionNodesStats(i, i, 2 * i, i, i, i, i, i, i)
+            rolledBack shouldBe TransactionNodesStatistics.EmptyStats
         }
         exeId = b.add(exe(false, false)(b), exeId) // one nonconsumming exercises
       }
@@ -159,11 +160,12 @@ class TransactionNodesStatisticsSpec
       for (i <- 1 to testIterations) {
         rbId = b.add(rollback(b), rbId) // one additional rolled Back rollback node
         addAllNodes(b, rbId) // one additional rolled Back nodes of each type
-        inside(TransactionNodesStatistics.stats(b.build())) { case TransactionNodesStatistics(committed, rolledBack) =>
-          committed shouldBe TransactionNodesStats(0, 0, 0, 0, 0, 0, 0, 0, 1)
-          // There are twice more rollback nodes, since we use an extra one to
-          // nest the other nodes in each loop
-          rolledBack shouldBe TransactionNodesStats(i, i, i, i, i, i, i, i, 2 * i)
+        inside(TransactionNodesStatistics.stats(b.build())) {
+          case TransactionNodesStatistics(committed, rolledBack) =>
+            committed shouldBe TransactionNodesStats(0, 0, 0, 0, 0, 0, 0, 0, 1)
+            // There are twice more rollback nodes, since we use an extra one to
+            // nest the other nodes in each loop
+            rolledBack shouldBe TransactionNodesStats(i, i, i, i, i, i, i, i, 2 * i)
         }
       }
     }
