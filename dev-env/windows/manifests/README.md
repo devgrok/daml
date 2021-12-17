@@ -4,6 +4,14 @@ DADEW uses [Scoop][scoop] for tools provisioning. Tools manifest files are in fa
 
 Tool name mentioned in `.dadew` file is the name of the manifest file (excluding it's `.json` extention).
 
+
+## behind a proxy
+
+I've created a customized msys2 install that sets up the proxy and installs the proxie's cert as a trusted CA. Two vars need to be set in `C:\Users\<user>\.config\scoop\config.json`:
+* `"trustcacerts": "windows path to certificates to install"` i.e. P:\trustedcerts
+* `"proxy": "host:port"` i.e 1.2.3.4:8080
+
+
 ## Adding new tool
 
 To add new tool:
