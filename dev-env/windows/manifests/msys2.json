@@ -27,8 +27,20 @@
 
             "$ErrorActionPreference = 'Continue'",
             "iex \"$dir\\usr\\bin\\bash.exe -lc 'pacman --version'\"",
-            "iex \"$dir\\usr\\bin\\bash.exe -lc 'pacman -S --noconfirm unzip zip mingw-w64-x86_64-gcc'\"",
-            "iex \"$dir\\usr\\bin\\bash.exe -lc 'pacman -S --noconfirm tar diffutils'\"",
+
+            "if (-Not -Not $(get_config 'proxy')) {",
+            "   iex \"$dir\\usr\\bin\\bash.exe -lc 'echo export https_proxy=http://$(get_config 'proxy') >>  /etc/profile '\"",
+            "}",
+            "if (-Not -Not $(get_config 'trustcacerts')) {",
+            "   cp \"$(get_config 'trustcacerts')\\*.*\"  \"$dir\\etc\\pki\\ca-trust\\source\\anchors\\\"",
+            "   iex \"$dir\\usr\\bin\\bash.exe -lc '/usr/bin/update-ca-trust'\"",
+            "   iex \"$dir\\usr\\bin\\bash.exe -lc 'cp /etc/pki/ca-trust/extracted/pem/tls-ca-bundle.pem /usr/ssl/certs/ca-bundle.crt'\"",
+            "   iex \"$dir\\usr\\bin\\bash.exe -lc 'cp /etc/pki/ca-trust/extracted/openssl/ca-bundle.trust.crt /usr/ssl/certs/ca-bundle.trust.crt'\"",
+            "}",
+
+            "$ErrorActionPreference = 'Stop'",
+            "iex \"$dir\\usr\\bin\\bash.exe -lc 'pacman -S -v --noconfirm unzip zip mingw-w64-x86_64-gcc'\"",
+            "iex \"$dir\\usr\\bin\\bash.exe -lc 'pacman -S -v --noconfirm tar diffutils'\"",
             "iex \"$dir\\usr\\bin\\bash.exe -lc 'pacman -U --noconfirm /jq.msys2'\"",
             "iex \"$dir\\usr\\bin\\bash.exe -lc 'pacman -U --noconfirm /netcat.msys2'\"",
             "iex \"$dir\\usr\\bin\\bash.exe -lc 'pacman -U --noconfirm /patch.msys2'\"",

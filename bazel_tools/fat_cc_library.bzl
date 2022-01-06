@@ -60,7 +60,7 @@ def _fat_cc_library_impl(ctx):
         inputs = static_libs,
         env = {"PATH": ""},
     )
-
+    
     mri_script_content = "\n".join(
         ["create {}".format(static_lib.path)] +
         ["addlib {}".format(lib.path) for lib in static_libs] +
@@ -84,12 +84,25 @@ def _fat_cc_library_impl(ctx):
                 ["-no_warning_for_no_symbols", "-static", "-o", static_lib.path] +
                 [f.path for f in static_libs],
         )
+    # https://stackoverflow.com/questions/2157629/linking-static-libraries-to-other-static-libraries
+    elif is_windows:
+        ctx.actions.run(
+            mnemonic = "CppLinkFatStaticLib",
+            outputs = [static_lib],
+            executable = ar,
+            tools = toolchain.all_files.to_list(),
+            arguments =
+                ["/OUT:{}".format(static_lib.path)] +
+                [f.path for f in static_libs],
+            inputs = static_libs,
+            env = {"PATH": ""},
+        )
     else:
         ctx.actions.run_shell(
             mnemonic = "CppLinkFatStaticLib",
             outputs = [static_lib],
             inputs = [mri_script] + static_libs,
-            command = "{ar} -M < {mri_script}".format(ar = ar, mri_script = mri_script.path),
+            command = '"{ar}" -M < {mri_script}'.format(ar = ar, mri_script = mri_script.path),
         )
 
     fat_lib = cc_common.create_library_to_link(
@@ -102,6 +115,7 @@ def _fat_cc_library_impl(ctx):
 
     linker_input = cc_common.create_linker_input(
         libraries = depset([fat_lib]),
+        #libraries = depset(input.libraries),
         owner = ctx.label,
     )
 

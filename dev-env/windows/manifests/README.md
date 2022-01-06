@@ -4,6 +4,33 @@ DADEW uses [Scoop][scoop] for tools provisioning. Tools manifest files are in fa
 
 Tool name mentioned in `.dadew` file is the name of the manifest file (excluding it's `.json` extention).
 
+## behind a proxy
+
+I've created a customized msys2 install that sets up the proxy and installs the proxie's cert as a trusted CA. Two vars need to be set in `C:\Users\<user>\.config\scoop\config.json`:
+* `"trustcacerts": "windows path to certificates to install"` i.e. `P:\\trustedcerts`
+* `"proxy": "host:port"` i.e `1.2.3.4:8080`
+Snippet:
+```json
+{
+    "trustcacerts":  "P:\\trustedcerts",
+    "proxy":  "1.2.3.4:8080"
+}
+
+```
+
+### Bazel behind a proxy
+To enable bazel to download the set the `https_proxy` env variable.
+i.e. run the following:
+```ps
+$env:https_proxy="http://1.2.3.4:8080"
+```
+
+The openjdk cacerts will also need to be manually updated with any proxy root certs i.e (replacing: `java-openjdk-8u302` and `<ALIAS_OF_CA>` and `<PATH_TO_CA_CER>`)
+```
+keytool -import -keystore %HOME%\dadew\scoop\apps\java-openjdk-8u302\current\jre\lib\security\cacerts -alias <ALIAS_OF_CA> -file <PATH_TO_CA_CER>
+```
+
+
 ## Adding new tool
 
 To add new tool:
