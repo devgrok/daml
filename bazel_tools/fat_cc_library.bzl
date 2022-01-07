@@ -90,12 +90,12 @@ def _fat_cc_library_impl(ctx):
             mnemonic = "CppLinkFatStaticLib",
             outputs = [static_lib],
             executable = ar,
-            tools = toolchain.all_files.to_list(),
-            arguments =
-                ["/OUT:{}".format(static_lib.path)] +
-                [f.path for f in static_libs],
             inputs = static_libs,
-            env = {"PATH": ""},
+            arguments =
+                #["-out", static_lib.path] +
+                #[f.path for f in static_libs],
+                ["-OUT:{}".format(static_lib.path)] +
+                [f.path for f in static_libs],
         )
     else:
         ctx.actions.run_shell(
@@ -152,6 +152,6 @@ fat_cc_library = rule(
     fragments = ["cpp"],
     outputs = {
         "dynamic_library": "lib%{name}.dll" if is_windows else "lib%{name}.so",
-        "static_library": "lib%{name}.a",
+        "static_library": "lib%{name}.lib" if is_windows else "lib%{name}.a",
     },
 )
