@@ -47,7 +47,7 @@ class Extractor[T](config: ExtractorConfig, target: T)(
   private val tokenHolder = config.accessTokenFile.map(new TokenHolder(_))
   private val parties: Set[String] = config.parties.toSet.map(identity)
 
-  implicit val system: ActorSystem = ActorSystem()
+  lazy implicit val system: ActorSystem = ActorSystem()
   import system.dispatcher
   implicit val materializer: Materializer = Materializer(system)
   implicit val esf: ExecutionSequencerFactory =
